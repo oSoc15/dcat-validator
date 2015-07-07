@@ -1,7 +1,7 @@
-DCAT Validator (Laravel web application)
+DCAT Validator (NodeJs and Bower project)
 
-Front-end developer: Sébastien Henau
-Back-end developer: Stan Callewaert
+Bower: Sébastien Henau
+NodeJs: Stan Callewaert
 
 /* Instalation of project */
 
