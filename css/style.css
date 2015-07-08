@@ -1,0 +1,171 @@
+/* ------------------------------------ */
+/* --------- SELF WRITTEN CSS --------- */
+/* ------------------------------------ */
+
+/* --------- HEADING --------- */
+.heading{
+	background-color:#009688;
+	color:red;
+}
+
+/* --------- LINKS --------- */
+a{
+	color:#009688;
+}
+
+a:hover{
+	color:#333;
+}
+
+.heading a span, .navbar-default .navbar-nav li a{
+	color:#fff;
+}
+
+/* --- PAGE CONTENT TAB 1 --- */
+.page-content{
+	padding:40px 30px 30px 20px;
+	border-left:1px solid #ddd;
+	border-right:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+	background-color:#fff;
+	overflow:auto;
+}
+
+/* --- PAGE CONTENT TABS --- */
+.btn-primary{
+	background-color:#009688;
+	border:none;
+	margin-left:5px;
+}
+
+.btn-primary:hover, .btn-primary:active, .btn-primary:focus{
+	background-color:#00AB9B !important;
+}
+
+/* ------ TAB 1 INPUT ------ */
+.input-group .form-control:focus{
+	-o-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
+	-ms-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
+	-moz-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
+	-webkit-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
+	box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
+	border:1px solid rgba(20, 149, 136, 0.5);
+}
+
+/* ------ TAB 1 INPUT ------ */
+#tab3 .input-group{
+	padding-right:40px;
+}
+
+#tab3 .btn-primary{
+	margin-left:55px;
+}
+
+#tab1 > form > div:nth-child(1) > div, #tab2 > form > div:nth-child(1) > div{
+	padding-right:0px;
+}
+
+textarea{
+	resize:none;
+}
+
+/* ------ FILE BUTTON ------ */
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+#tab2 > form > div:nth-child(1) > div > span > span{
+	padding:7px 15px;
+	-o-border-top-left-radius:5px;
+	-o-border-bottom-left-radius:5px;
+	-o-border-top-right-radius:0px;
+	-o-border-bottom-right-radius:0px;
+	-ms-border-top-left-radius:5px;
+	-ms-border-bottom-left-radius:5px;
+	-ms-border-top-right-radius:0px;
+	-ms-border-bottom-right-radius:0px;
+	-moz-border-top-left-radius:5px;
+	-moz-border-bottom-left-radius:5px;
+	-moz-border-top-right-radius:0px;
+	-moz-border-bottom-right-radius:0px;
+	-webkit-border-top-left-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-webkit-border-top-right-radius:0px;
+	-webkit-border-bottom-right-radius:0px;
+	border-top-left-radius:5px;
+	border-bottom-left-radius:5px;
+	border-top-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+
+#tab2 .feedbackInput{
+	width:91%;
+	float:right;
+	-o-border-top-left-radius:0px;
+	-o-border-bottom-left-radius:0px;
+	-o-border-top-right-radius:5px;
+	-o-border-bottom-right-radius:5px;
+	-ms-border-top-left-radius:0px;
+	-ms-border-bottom-left-radius:0px;
+	-ms-border-top-right-radius:5px;
+	-ms-border-bottom-right-radius:5px;
+	-moz-border-top-left-radius:0px;
+	-moz-border-bottom-left-radius:0px;
+	-moz-border-top-right-radius:5px;
+	-moz-border-bottom-right-radius:5px;
+	-webkit-border-top-left-radius:0px;
+	-webkit-border-bottom-left-radius:0px;
+	-webkit-border-top-right-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	border-top-left-radius:0px;
+	border-bottom-left-radius:0px;
+	border-top-right-radius:5px;
+	border-bottom-right-radius:5px;
+}
+
+/* ------ NAVIGATION BUTTON (RESPONSIVE) ------ */
+body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button > span{
+	background-color:#fff;
+}
+
+body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button{
+	background-color:#009688;
+}
+
+body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button:hover{
+	background-color:#00AB9B;
+}
+
+/* ------ TAB 3 ------ */
+#tab3 .btn-primary{
+	float:right;
+	margin-top:10px;
+}
+
+#tab3 > form > div:nth-child(1) > div{
+	padding-left:0px;
+}
+
+#tab3 > form > div:nth-child(1){
+	padding-left:20px;
+}
+
+
+
+

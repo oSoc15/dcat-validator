@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>DCAT - validator</title>
+
+    <!-- Bootstrap -->
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <!-- Self written css (not bootstrap) -->
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+
+    <div class="navbar navbar-default navbar-static-top heading" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">
+            <span class="navbar-name">DCAT - validator</span>
+          </a>
+        </div>
+        <center> 
+          <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#">ENG</a></li>
+              <li><a href="#">NL</a></li>
+              <li><a href="#">FR</a></li>
+            </ul>
+          </div>
+        </center>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2>DCAT - validator</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tabbable">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab1" data-toggle="tab">By URI</a></li>
+              <li><a href="#tab2" data-toggle="tab">By upload</a></li>
+              <li><a href="#tab3" data-toggle="tab">By direct input</a></li>
+            </ul>
+            <div class="tab-content page-content">
+              <div class="tab-pane active" id="tab1">
+                <form class="form-horizontal" method="post" action="">
+                  <div class="form-group">
+                    <label class="control-label col-sm-1" for="uri">URI:</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" name="uri" placeholder="Enter your URI here, example: http://www." aria-describedby="basic-addon1">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-11">
+                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane" id="tab2">
+                <form class="form-horizontal" method="post" action="">
+                  <div class="form-group">
+                    <label class="control-label col-sm-1" for="upload">Upload:</label>      
+                    <div class="col-sm-10">
+                      <span class="colinput-group-button">
+                        <span class="btn btn-primary btn-file">
+                          Browse
+                          <input type="file" multiple />
+                        </span>
+                      </span>
+                      <input type="text" placeholder="Select a file" class="form-control feedbackInput" readonly />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-11">
+                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane" id="tab3">
+                <form method="post" action="">
+                  <div class="form-group">
+                    <label for="direct_input">Direct input:</label>
+                    <div class="col-sm-12">
+                      <textarea class="form-control" placeholder="Enter your markup here" rows="5" id="comment"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-offset-10 col-sm-2">
+                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- jQuery -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- Self written javascript -->
+    <script src="js/script.js"></script>
+  </body>
+</html>
