@@ -32,9 +32,9 @@
         <center> 
           <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#">ENG</a></li>
-              <li><a href="#">NL</a></li>
-              <li><a href="#">FR</a></li>
+              <li class="engLan"><a href="#">ENG</a></li>
+              <li class="nlLan"><a href="#">NL</a></li>
+              <li class="frLan"><a href="#">FR</a></li>
             </ul>
           </div>
         </center>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="container">
-      <h2>DCAT - validator</h2>
+      <h2 class="validatorHeader">DCAT - validator</h2>
       <div class="row">
         <div class="col-md-12">
           <div class="tabbable">
@@ -55,14 +55,14 @@
               <div class="tab-pane active" id="tab1">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group">
-                    <label class="control-label col-sm-1" for="uri">URI:</label>
+                    <label class="control-label col-sm-1 labelURI" for="uri">URI:</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" name="uri" placeholder="Enter your URI here, example: http://www." aria-describedby="basic-addon1">
+                      <input type="text" class="form-control tab1Input" name="uri" placeholder="Enter your URI here, example: http://2015.summerofcode.be/" aria-describedby="basic-addon1">
                     </div>
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-10 col-sm-11">
-                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                      <input type="submit" name="actionTab1" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
@@ -70,7 +70,7 @@
               <div class="tab-pane" id="tab2">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group">
-                    <label class="control-label col-sm-1" for="upload">Upload:</label>      
+                    <label class="control-label col-sm-1 labelUpload" for="upload">Upload:</label>      
                     <div class="col-sm-10">
                       <span class="colinput-group-button">
                         <span class="btn btn-primary btn-file">
@@ -83,7 +83,7 @@
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-10 col-sm-11">
-                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                      <input type="submit" name="actionTab2" value="Validate" class="btn btn-primary" />
                     </div>
                   </div>
                 </form>
@@ -91,14 +91,14 @@
               <div class="tab-pane" id="tab3">
                 <form method="post" action="">
                   <div class="form-group">
-                    <label for="direct_input">Direct input:</label>
+                    <label for="direct_input labelDirectInput">Direct input:</label>
                     <div class="col-sm-12">
-                      <textarea class="form-control" placeholder="Enter your markup here" rows="5" id="comment"></textarea>
+                      <textarea class="form-control tab3Textarea" placeholder="Enter your markup here" rows="10" id="direct_input"></textarea>
                     </div>
                   </div>
                   <div class="form-group">
                     <div class="col-sm-offset-10 col-sm-2">
-                      <input type="submit" name="action" value="Validate" class="btn btn-primary" />
+                      <input type="submit" name="actionTab3" value="Validate" class="btn btn-primary" />
                     </div>
                   </div>
                 </form>
@@ -108,6 +108,54 @@
         </div>
       </div>
     </div>
+
+    <!-- <div class="container warnings">
+      <h2>Warnings</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-sm-12 col-lg-12 col-md-12">
+              <div class="tumbnail warning">
+                <p><span class="glyphicon glyphicon-warning-sign"></span>It is recommended to add a dcat:CatalogueRecord</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-sm-12 col-lg-12 col-md-12">
+              <div class="tumbnail warning">
+                <p><span class="glyphicon glyphicon-warning-sign"></span>It is recommended to add a dct:MediaTypeOrExtent</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container errors">
+      <h2>Errors</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-sm-12 col-lg-12 col-md-12">
+              <div class="tumbnail error">
+                <p><span class="glyphicon glyphicon-remove-sign"></span>Title in the dcat:catalog is required</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-sm-12 col-lg-12 col-md-12">
+              <div class="tumbnail error">
+                <p><span class="glyphicon glyphicon-remove-sign"></span>Description in the dcat:catalog is required</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

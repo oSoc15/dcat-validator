@@ -166,6 +166,30 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button:
 	padding-left:20px;
 }
 
+/* ------ ERRORS ------ */
+.errors .error, .warnings .warning{
+	border:1px solid #ddd;
+	padding:20px 40px;
+	margin-bottom:20px;
+	background-color:#f5f5f5;
+}
+
+.errors .error p, .warnings .warning p{
+	margin-bottom:0px;
+}
+
+.errors .error span, .warnings .warning span{
+	margin-right:20px;
+}
+
+.glyphicon-remove-sign{
+	color:#A74444;
+}
+
+.glyphicon-warning-sign{
+	color:#BC935A;
+}
+
 
 
 

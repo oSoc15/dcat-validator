@@ -1,0 +1,103 @@
+{
+  "languages": {
+    "dutch": [
+      {
+        "content":[
+          {
+            "title": "DCAT - validator",
+            ".navbar-name": "DCAT - validator",
+            ".validatorHeader": "DCAT - validator",
+            ".engLan": "ENG",
+            ".nlLan": "NL",
+            ".frLan": "FR",
+            "#tab1": "Via URI",
+            "#tab2": "Via upload",
+            "#tab3": "Via directe invoer",
+            "#tab1 .labelURI": "URI:",
+            "#tab2 .labelUpload": "Upload:",
+            "#tab2 .btn-file": "Browse",
+            "#tab3 .labelDirectInput": "Directe invoer:"
+          }
+        ],
+        "attributesPlaceholder":[
+          {
+            ".tab1Input": "Vul een URI in, bijvoorbeeld: http://2015.summerofcode.be/",
+            ".feedbackInput": "Selecteer een bestand",
+            ".tab3Textarea": "Plaats hier uw DCAT - feed in"
+          }
+        ],
+        "attributesInputValue":[
+          {
+            ".validateBtn": "Valideer"
+          }
+        ]
+      }
+    ],
+    "english": [
+      {
+        "content":[
+          {
+            "title": "DCAT - validator",
+            ".navbar-name": "DCAT - validator",
+            ".validatorHeader": "DCAT - validator",
+            ".engLan": "ENG",
+            ".nlLan": "NL",
+            ".frLan": "FR",
+            "#tab1": "By URI",
+            "#tab2": "By upload",
+            "#tab3": "By direct input",
+            "#tab1 .labelURI": "URI:",
+            "#tab2 .labelUpload": "Upload:",
+            "#tab2 .btn-file": "Browse",
+            "#tab3 .labelDirectInput": "Direct input:"
+          }
+        ],
+        "attributesPlaceholder":[
+          {
+            ".tab1Input": "Enter your URI here, example: http://2015.summerofcode.be/",
+            ".feedbackInput": "Select a file",
+            ".tab3Textarea": "Enter your markup here"
+          }
+        ],
+        "attributesInputValue":[
+          {
+            ".validateBtn": "Validate"
+          }
+        ]
+      }
+    ],
+    "french": [
+      {
+        "content":[
+          {
+            "title": "DCAT - correcteur",
+            ".navbar-name": "DCAT - correcteur",
+            ".validatorHeader": "DCAT - correcteur",
+            ".engLan": "ENG",
+            ".nlLan": "NL",
+            ".frLan": "FR",
+            "#tab1": "Par URI",
+            "#tab2": "En téléchargement",
+            "#tab3": "Insérez code source",
+            "#tab1 .labelURI": "URI:",
+            "#tab2 .labelUpload": "Télécharger:",
+            "#tab2 .btn-file": "explorer",
+            "#tab3 .labelDirectInput": "Source code:"
+          }
+        ],
+        "attributesPlaceholder":[
+          {
+            ".tab1Input": "Entrez votre URI ici, exemple: http://2015.summerofcode.be/",
+            ".feedbackInput": "Selectionnez un fichier",
+            ".tab3Textarea": "Entrez votre source code ici"
+          }
+        ],
+        "attributesInputValue":[
+          {
+            ".validateBtn": "Corriger"
+          }
+        ]
+      }
+    ]
+  }
+}
