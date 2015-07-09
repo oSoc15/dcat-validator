@@ -43,7 +43,7 @@ a:hover{
 }
 
 /* ------ TAB 1 INPUT ------ */
-.input-group .form-control:focus{
+#tab1 > form > div:nth-child(1) > div > input:focus, #direct_input:focus{
 	-o-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
 	-ms-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
 	-moz-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
@@ -53,10 +53,6 @@ a:hover{
 }
 
 /* ------ TAB 1 INPUT ------ */
-#tab3 .input-group{
-	padding-right:40px;
-}
-
 #tab3 .btn-primary{
 	margin-left:55px;
 }
