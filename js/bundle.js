@@ -6902,8 +6902,7 @@ function validate(dcat, callback) {
 						}
 						else {
 							if(propRulesKey == validatorRules['Distribution'].properties.length-1) {
-								feedback['errors'].push("error, predicate: " + properties[propKey].predicate + " does not excist.");
-								console.log(feedback['errors']);
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});
 							}
 						}
 					}
