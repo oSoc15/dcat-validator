@@ -49,6 +49,7 @@
  	} 	
 
 	function afterValidate(){
+		console.log(feedback);
 		var header = $("<h2>");
 		header.text("Errors");
 		$(".errors").append(header);

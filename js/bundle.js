@@ -6885,12 +6885,25 @@ function validate(dcat, callback) {
 
 			for (key in datasets) {
 				var properties = store.find(datasets[key].subject, null, null);
+
+				for(propKey in properties) {
+					for(propRulesKey in validatorRules['Dataset'].properties) {
+						if(properties[propKey].predicate == validatorRules['Dataset'].properties[propRulesKey].URI) {
+							break;
+						}
+						else {
+							if(propRulesKey == validatorRules['Dataset'].properties.length-1) {
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + distributions[key].subject + " does not exist."});
+							}
+						}
+					}
+				}
 			}
 
 			//Check distrubution class
 			var distributions = store.find(null, null , "http://www.w3.org/ns/dcat#Distribution");
 
-			if(datasets.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
+			if(distributions.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
 
 			for (key in distributions) {
 				var properties = store.find(distributions[key].subject, null, null);
@@ -6902,7 +6915,7 @@ function validate(dcat, callback) {
 						}
 						else {
 							if(propRulesKey == validatorRules['Distribution'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + distributions[key].subject + " does not exist."});
 							}
 						}
 					}
@@ -6925,7 +6938,7 @@ function validate(dcat, callback) {
 							}
 							else {
 								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogs[0].subject + " does not exist."});              
 	              				}
 							}
 						}
@@ -6951,7 +6964,7 @@ function validate(dcat, callback) {
 							}
 							else {
 								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogRecords[0].subject + " does not exist."});              
 	              				}
 							}
 						}
