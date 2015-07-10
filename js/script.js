@@ -2,14 +2,19 @@
 //this makes sure that multiple javascript files can use the same variables
 (function(){
 
-	var feedback, text, alert, success;
+	var feedback, text, alert, success, uploadFileValue, uploadError;
 
 	//init function that gets executed (below) immediatly after all the other functions are loaded
 	function init(){
+		var tab1 = $("#tab1");
+		if(tab1){
+			
+		}
 		//select the second tab and if it exists, execute function showUploadBtn
 		var tab2 = $("#tab2");
 		if(tab2){
 			showUploadBtn();
+			initValidateUpload();
 		}
 
 		var tab3 = $("#tab3");
@@ -38,14 +43,57 @@
 		});
 	}
 
+	function initValidateUpload(){
+		$("input[name='actionTab2']").on("click", validateUpload);
+	}
+
+	function validateUpload(event){
+		event.preventDefault();
+		var file = document.querySelector(".inputFile").files[0];
+
+		clearFeedback();
+
+		if (file) {
+		    var reader = new FileReader();
+		    reader.readAsText(file, "UTF-8");
+		    reader.onload = function (evt) {
+		        uploadFileValue = evt.target.result;
+		        feedback = validate(uploadFileValue, afterValidate);
+		        $(".feedbackInput").css("border", "1px solid #CCC");
+		    }
+		    reader.onerror = function (evt) {
+		        uploadFileValue = "The file cannot be validated.";
+		        uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
+		        uploadError.text(uploadFileValue);
+		        $(".startContent").prepend(uploadError);
+		    }
+		}else{
+			uploadFileValue = "Please select a file on your local computer in order to validate it.";
+			uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
+	        uploadError.text(uploadFileValue);
+	        $(".startContent").prepend(uploadError);
+	        $(".feedbackInput").css("border", "1px solid #D75452");
+		}
+	}
+
 	function initValidateDirectInput(){
 		$("input[name='actionTab3']").on("click", validateDirectInput);
 	}
 
 	function validateDirectInput(event){
 	    event.preventDefault();
-	    text = $(".tab3Textarea").val();
-	    feedback = validate(text,afterValidate);
+	    alert = $("<div>", {class:"alert alert-danger", role:"alert"});
+
+	    clearFeedback();
+
+	 	if($(".tab3Textarea").val() == ""){
+	 		alert.text("Please fill in the required field by manually inserting your DCAT feed.");
+			$(".startContent").prepend(alert);
+			$(".tab3Textarea").css("border", "1px solid #D75452");
+		}else{
+			text = $(".tab3Textarea").val();
+	    	feedback = validate(text, afterValidate);
+		}
  	} 	
 
 	function afterValidate(){
@@ -54,22 +102,20 @@
 		warning = $("<div>", {class:"alert alert-warning", role:"alert"});
 		$(".tab3Textarea").css("border", "1px solid #CCC");
 
-		if($(".errors")){
-			$(".errors").remove();
-			$(".warnings").remove();
-		}
+		clearFeedback();
+		showFeedback();
+	}
+
+	function clearFeedback(){
 		if($(".alert")){
 			$(".alert-danger").remove();
 			$(".alert-success").remove();
 			$(".alert-warning").remove();
 		}
 
-		if($(".tab3Textarea").val() == ""){
-			alert.text("Please fill in the required field by manually inserting your DCAT feed");
-			$(".startContent").prepend(alert);
-			$(".tab3Textarea").css("border", "1px solid #D75452");
-		}else{
-			showFeedback();
+		if($(".errors")){
+			$(".errors").remove();
+			$(".warnings").remove();
 		}
 	}
 
