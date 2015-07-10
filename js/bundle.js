@@ -6893,7 +6893,7 @@ function validate(dcat, callback) {
 						}
 						else {
 							if(propRulesKey == validatorRules['Dataset'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + distributions[key].subject + " does not exist."});
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + datasets[key].subject + " does not exist."});
 							}
 						}
 					}
