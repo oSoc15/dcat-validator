@@ -6849,62 +6849,6 @@ function hasOwnProperty(obj, prop) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":31,"_process":17,"inherits":15}],33:[function(require,module,exports){
 (function (global){
-var text = '@prefix dcat: <http://www.w3.org/ns/dcat#> .\n' +
-	'@prefix dc: <http://purl.org/dc/terms/> .\n' +
-	'@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n' +
-	'@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n' +
-
-	'<http://demo.thedatatank.com/api/dcat>\n' +
-	  'a dcat:Catalog ;\n' +
-	  'dc:title "The DataTank Demo" ;\n' +
-	  'dc:description "A demo catalog of datasets published by The DataTank." ;\n' +
-	  'dc:issued "2013-12-04T09:35:15+0000" ;\n' +
-	  'dc:language <http://lexvo.org/id/iso639-3/eng> ;\n' +
-	  'foaf:homepage <http://demo.thedatatank.com> ;\n' +
-	  'dc:license <http://www.opendefinition.org/licenses/cc-zero> ;\n' +
-	  'dc:publisher <http://thedatatank.com/#organization> ;\n' +
-	  'dc:modified "2015-04-23T09:52:31+0000" ;\n' +
-	  'dcat:dataset <http://demo.thedatatank.com/csv/geo>, <http://demo.thedatatank.com/json/crime>, <http://demo.thedatatank.com/xml/persons>, <http://demo.thedatatank.com/dresden/rivers>, <http://demo.thedatatank.com/france/places>, <http://demo.thedatatank.com/xls/baseball>, <http://demo.thedatatank.com/brussels/european_institutions>, <http://demo.thedatatank.com/brussels/atm>, <http://demo.thedatatank.com/brussels/infopoints>, <http://demo.thedatatank.com/brussels/youth_hostels>, <http://demo.thedatatank.com/brussels/museums>, <http://demo.thedatatank.com/brussels/parks>, <http://demo.thedatatank.com/brussels/police>, <http://demo.thedatatank.com/brussels/comics_tour>, <http://demo.thedatatank.com/flanders/datasets>, <http://demo.thedatatank.com/okfn/country-codes>, <http://demo.thedatatank.com/kortrijk/parking/shopandgo>, <http://demo.thedatatank.com/un/cofog>, <http://demo.thedatatank.com/okfn/census>, <http://demo.thedatatank.com/openflights/airlines>, <http://demo.thedatatank.com/wikipedia/nmbs/stations>, <http://demo.thedatatank.com/dbpedia/stations>, <http://demo.thedatatank.com/openbelgium/d48011dc-93a2-4239-aad3-fd294d474cb1>, <http://demo.thedatatank.com/villo/availability>, <http://demo.thedatatank.com/eandis/afschakelplan/westvlaanderen>, <http://demo.thedatatank.com/eandis/afschakelplan/oostvlaanderen>, <http://demo.thedatatank.com/dcat/demo>, <http://demo.thedatatank.com/mobilit/registrationsbyniscode>, <http://demo.thedatatank.com/csv/geo-proxy>, <http://demo.thedatatank.com/parko/states> .\n' +
-
-	'<http://lexvo.org/id/iso639-3/eng> a dc:LinguisticSystem .\n' +
-	'<http://www.opendefinition.org/licenses/cc-zero> a dc:LicenseDocument .\n' +
-	'<http://thedatatank.com/#organization>\n' +
-	  'a foaf:Agent ;\n' +
-	  'foaf:name "The DataTank" .\n' +
-
-	'<http://demo.thedatatank.com/brussels/museums>\n' +
-	  'a dcat:Dataset ;\n' +
-	  'dc:title "brussels/museums" ;\n' +
-	  'dc:description "Location of the museums of the City of Brussels" ;\n' +
-	  'dc:identifier "brussels/museums" ;\n' +
-	  'dc:issued "2013-12-15T15:30:55+0000" ;\n' +
-	  'dc:modified "2013-12-15T15:40:40+0000" ;\n' +
-	  'dc:source <http://www.brussel.be/artdet.cfm/7237/Open-data-museums> ;\n' +
-	  'dc:date "06-03-2012" ;\n' +
-	  'dcat:distribution <http://demo.thedatatank.com/brussels/museums.json> .\n' +
-
-	'<http://demo.thedatatank.com/brussels/museums.json>\n' +
-	  'a dcat:Distribution ;\n' +
-	  'dc:description "A json feed of http://demo.thedatatank.com/brussels/museums" ;\n' +
-	  'dcat:mediaType "application/json" .\n' +
-	  'dcat:bloebloe "application/json" .\n' +
-
-	'<http://demo.thedatatank.com/brussels/parks>\n' +
-	  'a dcat:Dataset ;\n' +
-	  'dc:title "brussels/parks" ;\n' +
-	  'dc:description "Location of the parks and gardens on the territory of the City of Brussels" ;\n' +
-	  'dc:identifier "brussels/parks" ;\n' +
-	  'dc:issued "2013-12-15T15:31:49+0000" ;\n' +
-	  'dc:modified "2013-12-15T15:41:10+0000" ;\n' +
-	  'dc:source <http://www.brussels.be/artdet.cfm/7232/Open-data-parks> ;\n' +
-	  'dc:date "06-03-2012" ;\n' +
-	  'dcat:distribution <http://demo.thedatatank.com/brussels/parks.json> .\n' +
-
-	'<http://demo.thedatatank.com/brussels/parks.json>\n' +
-	  'a dcat:Distribution ;\n' +
-	  'dc:description "A json feed of http://demo.thedatatank.com/brussels/parks" ;\n' +
-	  'dcat:mediaType "application/json" .';
-
 //Include all the n3 libraries Ruben Verborgh made
 var N3 = require('./lib/n3');
 require('./lib/n3').Util(global);
@@ -6936,6 +6880,8 @@ function validate(dcat, callback) {
 
 			//Check dataset class
 			var datasets = store.find(null, null , "http://www.w3.org/ns/dcat#Dataset");
+		
+			if(datasets.length == 0) feedback['errors'].push({"error":"The class Dataset is mandatory"});
 
 			for (key in datasets) {
 				var properties = store.find(datasets[key].subject, null, null);
@@ -6943,6 +6889,8 @@ function validate(dcat, callback) {
 
 			//Check distrubution class
 			var distributions = store.find(null, null , "http://www.w3.org/ns/dcat#Distribution");
+
+			if(datasets.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
 
 			for (key in distributions) {
 				var properties = store.find(distributions[key].subject, null, null);
@@ -6953,7 +6901,6 @@ function validate(dcat, callback) {
 							break;
 						}
 						else {
-							console.log(propRulesKey + " en " + validatorRules['Distribution'].properties.length-1);
 							if(propRulesKey == validatorRules['Distribution'].properties.length-1) {
 								feedback['errors'].push("error, predicate: " + properties[propKey].predicate + " does not excist.");
 								console.log(feedback['errors']);
@@ -6966,20 +6913,52 @@ function validate(dcat, callback) {
 			//Check catalog class
 			var catalogs = store.find(null, null , "http://www.w3.org/ns/dcat#Catalog");
 
-			for (key in catalogs) {
-				var properties = store.find(catalogs[key].subject, null, null);
+			if(catalogs.length < 1) {
+				feedback['errors'].push({"error":"The class Catalog is mandatory"});
+			} else {
+				if(catalogs.length == 1) {
+					var properties = store.find(catalogs[0].subject, null, null);
 				
-				for(propKey in properties) {
-					for(propRulesKey in validatorRules['Catalog'].properties) {
-						if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
-							break;
-						}
-						else {
-							if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
-              				}
+					for(propKey in properties) {
+						for(propRulesKey in validatorRules['Catalog'].properties) {
+							if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
+								break;
+							}
+							else {
+								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+	              				}
+							}
 						}
 					}
+				} else {
+					feedback['errors'].push({"error":"Multiple Catalog classes are initialized"});
+				}
+			}
+
+			//Check CatalogRecord class
+			var catalogRecords = store.find(null, null , "http://www.w3.org/ns/dcat#CatalogRecord");
+
+			if(catalogRecords.length < 1) {
+				feedback['errors'].push({"error":"The class CatalogRecord is mandatory"});
+			} else {
+				if(catalogRecords.length == 1) {
+					var properties = store.find(catalogRecords[0].subject, null, null);
+				
+					for(propKey in properties) {
+						for(propRulesKey in validatorRules['Catalog'].properties) {
+							if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
+								break;
+							}
+							else {
+								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+	              				}
+							}
+						}
+					}
+				} else {
+					feedback['errors'].push({"error":"Multiple CatalogRecord classes are initialized"});
 				}
 			}
 
