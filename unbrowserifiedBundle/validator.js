@@ -34,12 +34,25 @@ function validate(dcat, callback) {
 
 			for (key in datasets) {
 				var properties = store.find(datasets[key].subject, null, null);
+
+				for(propKey in properties) {
+					for(propRulesKey in validatorRules['Dataset'].properties) {
+						if(properties[propKey].predicate == validatorRules['Dataset'].properties[propRulesKey].URI) {
+							break;
+						}
+						else {
+							if(propRulesKey == validatorRules['Dataset'].properties.length-1) {
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + datasets[key].subject + " does not exist."});
+							}
+						}
+					}
+				}
 			}
 
 			//Check distrubution class
 			var distributions = store.find(null, null , "http://www.w3.org/ns/dcat#Distribution");
 
-			if(datasets.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
+			if(distributions.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
 
 			for (key in distributions) {
 				var properties = store.find(distributions[key].subject, null, null);
@@ -51,7 +64,7 @@ function validate(dcat, callback) {
 						}
 						else {
 							if(propRulesKey == validatorRules['Distribution'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + distributions[key].subject + " does not exist."});
 							}
 						}
 					}
@@ -74,7 +87,7 @@ function validate(dcat, callback) {
 							}
 							else {
 								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogs[0].subject + " does not exist."});              
 	              				}
 							}
 						}
@@ -87,26 +100,22 @@ function validate(dcat, callback) {
 			//Check CatalogRecord class
 			var catalogRecords = store.find(null, null , "http://www.w3.org/ns/dcat#CatalogRecord");
 
-			if(catalogRecords.length < 1) {
-				feedback['errors'].push({"error":"The class CatalogRecord is mandatory"});
+			if(catalogRecords.length > 1) {
+				feedback['errors'].push({"error":"Multiple CatalogRecord classes are initialized"});
 			} else {
-				if(catalogRecords.length == 1) {
-					var properties = store.find(catalogRecords[0].subject, null, null);
-				
-					for(propKey in properties) {
-						for(propRulesKey in validatorRules['Catalog'].properties) {
-							if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
-								break;
-							}
-							else {
-								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
-	              				}
-							}
+				var properties = store.find(catalogRecords[0].subject, null, null);
+			
+				for(propKey in properties) {
+					for(propRulesKey in validatorRules['Catalog'].properties) {
+						if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
+							break;
+						}
+						else {
+							if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogRecords[0].subject + " does not exist."});              
+              				}
 						}
 					}
-				} else {
-					feedback['errors'].push({"error":"Multiple CatalogRecord classes are initialized"});
 				}
 			}
 
@@ -259,22 +268,25 @@ validatorRules['CatalogRecord'] =
 		"URI": "http://purl.org/dc/terms/description"
 		},
 	    {
-	      "name": "issued",
-	      "prefix": "dct",
-	      "required": "recommended",
-	      "Range": "rdfs:LiteralDateTime"
-	    },
-	    {
-	      "name": "modified",
-	      "prefix": "dct",
-	      "required": "mandatory",
-	      "Range": "rdfs:LiteralDateTime"
-	    },
+		"name": "issued",
+		"prefix": "dct",
+		"required": "recommended",
+		"Range": "rdfs:LiteralDateTime",
+		"URI": "http://purl.org/dc/terms/issued"
+		},
+		{
+		"name": "modified",
+		"prefix": "dct",
+		"required": "recommended",
+		"Range": "rdfs:LiteralDateTime",
+		"URI": "http://purl.org/dc/terms/modified"
+		},
 	    {
 	      "name": "primaryTopic",
 	      "prefix": "foaf",
 	      "required": "mandatory",
-	      "Range": "foaf:primaryTopic"
+	      "Range": "foaf:primaryTopic",
+	      "URI": "http://xmlns.com/foaf/0.1/primaryTopic"
 	    },
   	]
 };
@@ -287,100 +299,123 @@ validatorRules['Dataset'] =
   "required": "mandatory",
   "properties": [
     {
-      "name": "title",
-      "prefix": "dct",
-      "required": "mandatory",
-      "Range": "rdfs:Literal"
-    },
-    {
-      "name": "description",
-      "prefix": "dct",
-      "required": "mandatory",
-      "Range": "rdfs:Literal"
-    },
-    {
-      "name": "issued",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "rdfs:LiteralDateTime"
-    },
-    {
-      "name": "modified",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "rdfs:LiteralDateTime"
-    },
-    {
-      "name": "language",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "dct:LinguisticSystem"
-    },
-    {
-      "name": "publisher",
-      "prefix": "dct",
-      "required": "recommended",
-      "Range": "foaf:Agent"
-    },
+	"name": "type",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+	},
+	{
+	"name": "title",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://purl.org/dc/terms/title"
+	},
+	{
+	"name": "description",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://purl.org/dc/terms/description"
+	},
+	{
+	"name": "issued",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "rdfs:LiteralDateTime",
+	"URI": "http://purl.org/dc/terms/issued"
+	},
+	{
+	"name": "modified",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "rdfs:LiteralDateTime",
+	"URI": "http://purl.org/dc/terms/modified"
+	},
+	{
+	"name": "language",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "dct:LinguisticSystem",
+	"URI": "http://purl.org/dc/terms/language"
+	},
+	{
+	"name": "publisher",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "foaf:Agent",
+	"URI": "http://purl.org/dc/terms/publisher"
+	},
     {
       "name": "accrualPeriodicity",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:Frequency"
+      "Range": "dct:Frequency",
+      "URI": "http://purl.org/dc/terms/publisher"
     },
     {
       "name": "identifier",
       "prefix": "dct",
       "required": "optional",
-      "Range": "frdfs:Literal"
+      "Range": "frdfs:Literal",
+      "URI": "http://purl.org/dc/terms/identifier"
     },
     {
       "name": "temporal",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:PeriodOfTime"
+      "Range": "dct:PeriodOfTime",
+      "URI": "http://purl.org/dc/terms/temporal"
     },
     {
       "name": "theme",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "skos:Concept"
+      "Range": "skos:Concept",
+      "URI": "http://www.w3.org/ns/dcat#theme"
     },
     {
       "name": "keyword",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "rdfs:Literal"
+      "Range": "rdfs:Literal",
+      "URI": "http://www.w3.org/ns/dcat#keyword"
     },
     {
       "name": "contactPoint",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "vcard:Kind"
+      "Range": "vcard:Kind",
+      "URI": "http://www.w3.org/ns/dcat#contactPoint"
     },
     {
       "name": "temporal",
       "prefix": "dct",
       "required": "optional",
-      "Range": "false"
+      "Range": "false",
+      "URI": "http://purl.org/dc/terms/temporal"
     },
     {
       "name": "spatial",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:Location"
+      "Range": "dct:Location",
+      "URI": "http://purl.org/dc/terms/spatial"
     },
     {
       "name": "distribution",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "dcat:Distribution"
+      "Range": "dcat:Distribution",
+      "URI": "http://www.w3.org/ns/dcat#distribution"
     },
     {
       "name": "landingPage",
       "prefix": "dcat",
       "required": "optional",
-      "Range": "foaf:Document"
+      "Range": "foaf:Document",
+      "URI": "http://www.w3.org/ns/dcat#landingPage"
     }
   ]
 };
