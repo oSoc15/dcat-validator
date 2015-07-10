@@ -6925,8 +6925,8 @@ function validate(dcat, callback) {
 			//Check catalog class
 			var catalogs = store.find(null, null , "http://www.w3.org/ns/dcat#Catalog");
 
-			if(catalogs.length < 1) {
-				feedback['errors'].push({"error":"The class Catalog is mandatory"});
+			if(catalogs.length > 1) {
+				feedback['errors'].push({"error":"Multiple Catalog classes are initialized"});
 			} else {
 				if(catalogs.length == 1) {
 					var properties = store.find(catalogs[0].subject, null, null);
@@ -6943,8 +6943,6 @@ function validate(dcat, callback) {
 							}
 						}
 					}
-				} else {
-					feedback['errors'].push({"error":"Multiple Catalog classes are initialized"});
 				}
 			}
 
@@ -6954,17 +6952,19 @@ function validate(dcat, callback) {
 			if(catalogRecords.length > 1) {
 				feedback['errors'].push({"error":"Multiple CatalogRecord classes are initialized"});
 			} else {
-				var properties = store.find(catalogRecords[0].subject, null, null);
-			
-				for(propKey in properties) {
-					for(propRulesKey in validatorRules['Catalog'].properties) {
-						if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
-							break;
-						}
-						else {
-							if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogRecords[0].subject + " does not exist."});              
-              				}
+				if(catalogRecords.length == 1) {
+					var properties = store.find(catalogRecords[0].subject, null, null);
+				
+					for(propKey in properties) {
+						for(propRulesKey in validatorRules['Catalog'].properties) {
+							if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
+								break;
+							}
+							else {
+								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogRecords[0].subject + " does not exist."});              
+	              				}
+							}
 						}
 					}
 				}
