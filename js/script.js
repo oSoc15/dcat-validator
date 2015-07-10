@@ -51,14 +51,17 @@
 	function afterValidate(){
 		alert = $("<div>", {class:"alert alert-danger", role:"alert"});
 		success = $("<div>", {class:"alert alert-success", role:"alert"});
+		warning = $("<div>", {class:"alert alert-warning", role:"alert"});
 		$(".tab3Textarea").css("border", "1px solid #CCC");
 
 		if($(".errors")){
 			$(".errors").remove();
+			$(".warnings").remove();
 		}
 		if($(".alert")){
 			$(".alert-danger").remove();
 			$(".alert-success").remove();
+			$(".alert-warning").remove();
 		}
 
 		if($(".tab3Textarea").val() == ""){
@@ -70,41 +73,81 @@
 		}
 	}
 
+	function showErrorWarning(type, glyph, value, container){
+		var rowStart = $("<div>", {class:"row start"});
+    	var start = $("<div>", {class:"col-md-12"});
+	 	var row = $("<div>", {class:"row"});
+	 	var column = $("<div>", {class:"col-sm-12 col-lg-12 col-md-12"});
+	 	var tumbnail = $("<div>", {class:"tumbnail " + type});
+	 	var warning = $("<p>");
+	 	warning.append('<span class="glyphicon glyphicon-' + glyph + '-sign"></span>');
+	 	warning.append(value.error);
+
+	 	rowStart.append(start);
+	 	start.append(row);
+	 	row.append(column);
+	 	column.append(tumbnail);
+	 	tumbnail.append(warning);
+
+	 	container.append(rowStart);
+	}
+
 	function showFeedback(){
-		if(feedback['errors'].length == 0){
-			success.text("Your DCAT - feed is valid. You have no errors or warnings");
+		var warningsContainer = $("<div>", {class:"container warnings"});
+		var errorsContainer = $("<div>", {class:"container errors"});
+
+		if(feedback['errors'].length == 0 && feedback['warnings'].length == 0){
+			success.text("Your DCAT - feed is valid. You have no errors and no warnings.");
 			$(".startContent").prepend(success);
-		}else{
-			if(feedback['errors'].length <= 1){
-				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error. You can find your error below the page.");
-			}else{
-				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors. You can find your errors below the page.");
+		}else if(feedback['errors'].length != 0 && feedback['warnings'].length != 0){
+			if(feedback['errors'].length == 1 && feedback['warnings'].length == 1){
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and " + feedback['warnings'].length + " warning. You can find your error below the page.");
+			}else if(feedback["errors"].length == 1 && feedback["warnings"] > 1){
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and " + feedback['warnings'].length + " warnings. You can find your error below the page.");
+			}else if(feedback["errors"].length > 1 && feedback['warnings'].length == 1){
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and " + feedback['warnings'].length + " warning. You can find your error below the page.");
+			}else if(feedback['errors'].length > 1 && feedback['warnings'].length > 1){
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and " + feedback['warnings'].length + " warnings. You can find your error below the page.");
 			}
 			$(".startContent").prepend(alert);
-			
-			var errorsContainer = $("<div>", {class:"container errors"});
+		}else if(feedback['errors'].length != 0 && feedback['warnings'].length == 0){
+			if(feedback['errors'].length == 1){
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and no warnings. You can find your error below the page.");
+			}else{
+				alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and no warnings. You can find your errors below the page.");
+			}
+			$(".startContent").prepend(alert);
+		}else if(feedback['errors'].length == 0 && feedback['warnings'].length != 0){
+			if(feedback['warnings'].length == 1){
+				warning.text("Your DCAT - feed is valid. You have no errors, but " + feedback['warnings'].length + " warning. You can see your warnings below the page.");	
+			}else{
+				warning.text("Your DCAT - feed is valid. You have no errors, but " + feedback['warnings'].length + " warnings. You can see your warnings below the page.");
+			}
+			$(".startContent").prepend(warning);
+		}
+
+		if(feedback['warnings'].length != 0){
+			var header2 = $("<h2>");
+			header2.text("Warnings");
+			warningsContainer.append(header2);
+			$.each(feedback["warnings"], function(key, value){
+			 	showErrorWarning("warning", "warning", value, warningsContainer);
+		    });
+		    warningsContainer.insertAfter($(".startContent"));
+		}
+
+		if(feedback['errors'].length != 0){			
 			var header = $("<h2>");
 			header.text("Errors");
 			errorsContainer.append(header);
 			$.each(feedback["errors"], function(key, value){
-				var rowStart = $("<div>", {class:"row start"});
-		    	var start = $("<div>", {class:"col-md-12"});
-			 	var row = $("<div>", {class:"row"});
-			 	var column = $("<div>", {class:"col-sm-12 col-lg-12 col-md-12"});
-			 	var tumbnail = $("<div>", {class:"tumbnail error"});
-			 	var error = $("<p>");
-			 	error.append('<span class="glyphicon glyphicon-remove-sign"></span>');
-			 	error.append(value.error);
-
-			 	rowStart.append(start);
-			 	start.append(row);
-			 	row.append(column);
-			 	column.append(tumbnail);
-			 	tumbnail.append(error);
-
-			 	errorsContainer.append(rowStart);
-			 	errorsContainer.insertAfter($(".startContent"));
+			 	showErrorWarning("error", "remove", value, errorsContainer);			 	
 		    });
+		    if(feedback['warnings'].length != 0){
+				errorsContainer.insertAfter(warningsContainer);
+		 	}else{
+		 		errorsContainer.insertAfter($(".startContent"));
+		 	}
 		}
 	}
 
