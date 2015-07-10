@@ -1,59 +1,3 @@
-var text = '@prefix dcat: <http://www.w3.org/ns/dcat#> .\n' +
-	'@prefix dc: <http://purl.org/dc/terms/> .\n' +
-	'@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n' +
-	'@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n' +
-
-	'<http://demo.thedatatank.com/api/dcat>\n' +
-	  'a dcat:Catalog ;\n' +
-	  'dc:title "The DataTank Demo" ;\n' +
-	  'dc:description "A demo catalog of datasets published by The DataTank." ;\n' +
-	  'dc:issued "2013-12-04T09:35:15+0000" ;\n' +
-	  'dc:language <http://lexvo.org/id/iso639-3/eng> ;\n' +
-	  'foaf:homepage <http://demo.thedatatank.com> ;\n' +
-	  'dc:license <http://www.opendefinition.org/licenses/cc-zero> ;\n' +
-	  'dc:publisher <http://thedatatank.com/#organization> ;\n' +
-	  'dc:modified "2015-04-23T09:52:31+0000" ;\n' +
-	  'dcat:dataset <http://demo.thedatatank.com/csv/geo>, <http://demo.thedatatank.com/json/crime>, <http://demo.thedatatank.com/xml/persons>, <http://demo.thedatatank.com/dresden/rivers>, <http://demo.thedatatank.com/france/places>, <http://demo.thedatatank.com/xls/baseball>, <http://demo.thedatatank.com/brussels/european_institutions>, <http://demo.thedatatank.com/brussels/atm>, <http://demo.thedatatank.com/brussels/infopoints>, <http://demo.thedatatank.com/brussels/youth_hostels>, <http://demo.thedatatank.com/brussels/museums>, <http://demo.thedatatank.com/brussels/parks>, <http://demo.thedatatank.com/brussels/police>, <http://demo.thedatatank.com/brussels/comics_tour>, <http://demo.thedatatank.com/flanders/datasets>, <http://demo.thedatatank.com/okfn/country-codes>, <http://demo.thedatatank.com/kortrijk/parking/shopandgo>, <http://demo.thedatatank.com/un/cofog>, <http://demo.thedatatank.com/okfn/census>, <http://demo.thedatatank.com/openflights/airlines>, <http://demo.thedatatank.com/wikipedia/nmbs/stations>, <http://demo.thedatatank.com/dbpedia/stations>, <http://demo.thedatatank.com/openbelgium/d48011dc-93a2-4239-aad3-fd294d474cb1>, <http://demo.thedatatank.com/villo/availability>, <http://demo.thedatatank.com/eandis/afschakelplan/westvlaanderen>, <http://demo.thedatatank.com/eandis/afschakelplan/oostvlaanderen>, <http://demo.thedatatank.com/dcat/demo>, <http://demo.thedatatank.com/mobilit/registrationsbyniscode>, <http://demo.thedatatank.com/csv/geo-proxy>, <http://demo.thedatatank.com/parko/states> .\n' +
-
-	'<http://lexvo.org/id/iso639-3/eng> a dc:LinguisticSystem .\n' +
-	'<http://www.opendefinition.org/licenses/cc-zero> a dc:LicenseDocument .\n' +
-	'<http://thedatatank.com/#organization>\n' +
-	  'a foaf:Agent ;\n' +
-	  'foaf:name "The DataTank" .\n' +
-
-	'<http://demo.thedatatank.com/brussels/museums>\n' +
-	  'a dcat:Dataset ;\n' +
-	  'dc:title "brussels/museums" ;\n' +
-	  'dc:description "Location of the museums of the City of Brussels" ;\n' +
-	  'dc:identifier "brussels/museums" ;\n' +
-	  'dc:issued "2013-12-15T15:30:55+0000" ;\n' +
-	  'dc:modified "2013-12-15T15:40:40+0000" ;\n' +
-	  'dc:source <http://www.brussel.be/artdet.cfm/7237/Open-data-museums> ;\n' +
-	  'dc:date "06-03-2012" ;\n' +
-	  'dcat:distribution <http://demo.thedatatank.com/brussels/museums.json> .\n' +
-
-	'<http://demo.thedatatank.com/brussels/museums.json>\n' +
-	  'a dcat:Distribution ;\n' +
-	  'dc:description "A json feed of http://demo.thedatatank.com/brussels/museums" ;\n' +
-	  'dcat:mediaType "application/json" .\n' +
-	  'dcat:bloebloe "application/json" .\n' +
-
-	'<http://demo.thedatatank.com/brussels/parks>\n' +
-	  'a dcat:Dataset ;\n' +
-	  'dc:title "brussels/parks" ;\n' +
-	  'dc:description "Location of the parks and gardens on the territory of the City of Brussels" ;\n' +
-	  'dc:identifier "brussels/parks" ;\n' +
-	  'dc:issued "2013-12-15T15:31:49+0000" ;\n' +
-	  'dc:modified "2013-12-15T15:41:10+0000" ;\n' +
-	  'dc:source <http://www.brussels.be/artdet.cfm/7232/Open-data-parks> ;\n' +
-	  'dc:date "06-03-2012" ;\n' +
-	  'dcat:distribution <http://demo.thedatatank.com/brussels/parks.json> .\n' +
-
-	'<http://demo.thedatatank.com/brussels/parks.json>\n' +
-	  'a dcat:Distribution ;\n' +
-	  'dc:description "A json feed of http://demo.thedatatank.com/brussels/parks" ;\n' +
-	  'dcat:mediaType "application/json" .';
-
 //Include all the n3 libraries Ruben Verborgh made
 var N3 = require('./lib/n3');
 require('./lib/n3').Util(global);
@@ -85,13 +29,30 @@ function validate(dcat, callback) {
 
 			//Check dataset class
 			var datasets = store.find(null, null , "http://www.w3.org/ns/dcat#Dataset");
+		
+			if(datasets.length == 0) feedback['errors'].push({"error":"The class Dataset is mandatory"});
 
 			for (key in datasets) {
 				var properties = store.find(datasets[key].subject, null, null);
+
+				for(propKey in properties) {
+					for(propRulesKey in validatorRules['Dataset'].properties) {
+						if(properties[propKey].predicate == validatorRules['Dataset'].properties[propRulesKey].URI) {
+							break;
+						}
+						else {
+							if(propRulesKey == validatorRules['Dataset'].properties.length-1) {
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + datasets[key].subject + " does not exist."});
+							}
+						}
+					}
+				}
 			}
 
 			//Check distrubution class
 			var distributions = store.find(null, null , "http://www.w3.org/ns/dcat#Distribution");
+
+			if(distributions.length == 0) feedback['warnings'].push({"error":"The class Distribution is recommended"});
 
 			for (key in distributions) {
 				var properties = store.find(distributions[key].subject, null, null);
@@ -102,10 +63,8 @@ function validate(dcat, callback) {
 							break;
 						}
 						else {
-							console.log(propRulesKey + " en " + validatorRules['Distribution'].properties.length-1);
 							if(propRulesKey == validatorRules['Distribution'].properties.length-1) {
-								feedback['errors'].push("error, predicate: " + properties[propKey].predicate + " does not excist.");
-								console.log(feedback['errors']);
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + distributions[key].subject + " does not exist."});
 							}
 						}
 					}
@@ -115,9 +74,37 @@ function validate(dcat, callback) {
 			//Check catalog class
 			var catalogs = store.find(null, null , "http://www.w3.org/ns/dcat#Catalog");
 
-			for (key in catalogs) {
-				var properties = store.find(catalogs[key].subject, null, null);
+			if(catalogs.length < 1) {
+				feedback['errors'].push({"error":"The class Catalog is mandatory"});
+			} else {
+				if(catalogs.length == 1) {
+					var properties = store.find(catalogs[0].subject, null, null);
 				
+					for(propKey in properties) {
+						for(propRulesKey in validatorRules['Catalog'].properties) {
+							if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
+								break;
+							}
+							else {
+								if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
+									feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogs[0].subject + " does not exist."});              
+	              				}
+							}
+						}
+					}
+				} else {
+					feedback['errors'].push({"error":"Multiple Catalog classes are initialized"});
+				}
+			}
+
+			//Check CatalogRecord class
+			var catalogRecords = store.find(null, null , "http://www.w3.org/ns/dcat#CatalogRecord");
+
+			if(catalogRecords.length > 1) {
+				feedback['errors'].push({"error":"Multiple CatalogRecord classes are initialized"});
+			} else {
+				var properties = store.find(catalogRecords[0].subject, null, null);
+			
 				for(propKey in properties) {
 					for(propRulesKey in validatorRules['Catalog'].properties) {
 						if(properties[propKey].predicate == validatorRules['Catalog'].properties[propRulesKey].URI) {
@@ -125,7 +112,7 @@ function validate(dcat, callback) {
 						}
 						else {
 							if(propRulesKey == validatorRules['Catalog'].properties.length-1) {
-								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " does not exist."});              
+								feedback['errors'].push({"error":"predicate: " + properties[propKey].predicate + " in class: " + catalogRecords[0].subject + " does not exist."});              
               				}
 						}
 					}
@@ -281,22 +268,25 @@ validatorRules['CatalogRecord'] =
 		"URI": "http://purl.org/dc/terms/description"
 		},
 	    {
-	      "name": "issued",
-	      "prefix": "dct",
-	      "required": "recommended",
-	      "Range": "rdfs:LiteralDateTime"
-	    },
-	    {
-	      "name": "modified",
-	      "prefix": "dct",
-	      "required": "mandatory",
-	      "Range": "rdfs:LiteralDateTime"
-	    },
+		"name": "issued",
+		"prefix": "dct",
+		"required": "recommended",
+		"Range": "rdfs:LiteralDateTime",
+		"URI": "http://purl.org/dc/terms/issued"
+		},
+		{
+		"name": "modified",
+		"prefix": "dct",
+		"required": "recommended",
+		"Range": "rdfs:LiteralDateTime",
+		"URI": "http://purl.org/dc/terms/modified"
+		},
 	    {
 	      "name": "primaryTopic",
 	      "prefix": "foaf",
 	      "required": "mandatory",
-	      "Range": "foaf:primaryTopic"
+	      "Range": "foaf:primaryTopic",
+	      "URI": "http://xmlns.com/foaf/0.1/primaryTopic"
 	    },
   	]
 };
@@ -309,100 +299,123 @@ validatorRules['Dataset'] =
   "required": "mandatory",
   "properties": [
     {
-      "name": "title",
-      "prefix": "dct",
-      "required": "mandatory",
-      "Range": "rdfs:Literal"
-    },
-    {
-      "name": "description",
-      "prefix": "dct",
-      "required": "mandatory",
-      "Range": "rdfs:Literal"
-    },
-    {
-      "name": "issued",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "rdfs:LiteralDateTime"
-    },
-    {
-      "name": "modified",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "rdfs:LiteralDateTime"
-    },
-    {
-      "name": "language",
-      "prefix": "dct",
-      "required": "optional",
-      "Range": "dct:LinguisticSystem"
-    },
-    {
-      "name": "publisher",
-      "prefix": "dct",
-      "required": "recommended",
-      "Range": "foaf:Agent"
-    },
+	"name": "type",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+	},
+	{
+	"name": "title",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://purl.org/dc/terms/title"
+	},
+	{
+	"name": "description",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "rdfs:Literal",
+	"URI": "http://purl.org/dc/terms/description"
+	},
+	{
+	"name": "issued",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "rdfs:LiteralDateTime",
+	"URI": "http://purl.org/dc/terms/issued"
+	},
+	{
+	"name": "modified",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "rdfs:LiteralDateTime",
+	"URI": "http://purl.org/dc/terms/modified"
+	},
+	{
+	"name": "language",
+	"prefix": "dct",
+	"required": "recommended",
+	"Range": "dct:LinguisticSystem",
+	"URI": "http://purl.org/dc/terms/language"
+	},
+	{
+	"name": "publisher",
+	"prefix": "dct",
+	"required": "mandatory",
+	"Range": "foaf:Agent",
+	"URI": "http://purl.org/dc/terms/publisher"
+	},
     {
       "name": "accrualPeriodicity",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:Frequency"
+      "Range": "dct:Frequency",
+      "URI": "http://purl.org/dc/terms/publisher"
     },
     {
       "name": "identifier",
       "prefix": "dct",
       "required": "optional",
-      "Range": "frdfs:Literal"
+      "Range": "frdfs:Literal",
+      "URI": "http://purl.org/dc/terms/identifier"
     },
     {
       "name": "temporal",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:PeriodOfTime"
+      "Range": "dct:PeriodOfTime",
+      "URI": "http://purl.org/dc/terms/temporal"
     },
     {
       "name": "theme",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "skos:Concept"
+      "Range": "skos:Concept",
+      "URI": "http://www.w3.org/ns/dcat#theme"
     },
     {
       "name": "keyword",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "rdfs:Literal"
+      "Range": "rdfs:Literal",
+      "URI": "http://www.w3.org/ns/dcat#keyword"
     },
     {
       "name": "contactPoint",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "vcard:Kind"
+      "Range": "vcard:Kind",
+      "URI": "http://www.w3.org/ns/dcat#contactPoint"
     },
     {
       "name": "temporal",
       "prefix": "dct",
       "required": "optional",
-      "Range": "false"
+      "Range": "false",
+      "URI": "http://purl.org/dc/terms/temporal"
     },
     {
       "name": "spatial",
       "prefix": "dct",
       "required": "optional",
-      "Range": "dct:Location"
+      "Range": "dct:Location",
+      "URI": "http://purl.org/dc/terms/spatial"
     },
     {
       "name": "distribution",
       "prefix": "dcat",
       "required": "recommended",
-      "Range": "dcat:Distribution"
+      "Range": "dcat:Distribution",
+      "URI": "http://www.w3.org/ns/dcat#distribution"
     },
     {
       "name": "landingPage",
       "prefix": "dcat",
       "required": "optional",
-      "Range": "foaf:Document"
+      "Range": "foaf:Document",
+      "URI": "http://www.w3.org/ns/dcat#landingPage"
     }
   ]
 };
