@@ -1,7 +1,6 @@
 //anonymous functions that executes automatically by itself
 //this makes sure that multiple javascript files can use the same variables
 (function(){
-
 	var feedback, text, alert, success, uploadFileValue, uploadError;
 
 	//init function that gets executed (below) immediatly after all the other functions are loaded
@@ -58,7 +57,24 @@
 		    reader.readAsText(file, "UTF-8");
 		    reader.onload = function (evt) {
 		        uploadFileValue = evt.target.result;
-		        feedback = validate(uploadFileValue, afterValidate);
+
+
+
+				rdf.parseJsonLd(uploadFileValue, function (graph) {
+					rdf.serializeTurtle(graph, function(uploadFileValue){
+						feedback = validate(uploadFileValue, afterValidate);
+					});
+				});
+
+				// rdf.parseRdfXml(uploadFileValue, function (graph) {
+				// 	rdf.serializeTurtle(graph, function(uploadFileValue){
+				// 		feedback = validate(uploadFileValue, afterValidate);
+				// 	});
+				// });
+
+				console.log(rdf);
+
+				//feedback = validate(uploadFileValue, afterValidate);
 		        $(".feedbackInput").css("border", "1px solid #CCC");
 		    }
 		    reader.onerror = function (evt) {
@@ -120,6 +136,7 @@
 	}
 
 	function showErrorWarning(type, glyph, value, container){
+		var 
 		var rowStart = $("<div>", {class:"row start"});
     	var start = $("<div>", {class:"col-md-12"});
 	 	var row = $("<div>", {class:"row"});
@@ -175,7 +192,9 @@
 		if(feedback['warnings'].length != 0){
 			var header2 = $("<h2>");
 			header2.text("Warnings");
+			var list = $("<div>");
 			warningsContainer.append(header2);
+			warningsContainer.append(list);
 			$.each(feedback["warnings"], function(key, value){
 			 	showErrorWarning("warning", "warning", value, warningsContainer);
 		    });

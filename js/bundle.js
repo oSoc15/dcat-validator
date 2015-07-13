@@ -6859,7 +6859,7 @@ if(window) window.validate = validate;
 //The validation function with a callback to start the code after this function is done
 function validate(dcat, callback) {
     
-    //create an array with errors and warnings that contain objects with errror messages
+  //create an array with errors and warnings that contain objects with errror messages
 	var feedback = {};
 	feedback['errors'] = [];
 	feedback['warnings'] = [];  

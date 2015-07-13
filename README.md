@@ -25,11 +25,17 @@ npm install
 
 This command will install all the right node_modules from the package.json and put them in a map node_modules
 
-___________
-
 **************
 Library
 **************
 
 The validation library that is in this repository (bundle.js) can be found on the github (https://github.com/oSoc15/dcat-validator.js).
 This library has been browserified to one javascript file that is named bundle.js. You can find it in the js folder.
+
+
+**************
+Used libraries
+**************
+
+RDF-Ext:
+This library supports multiple formats(json-ld, turtle, n3, ...). It consists of parsers and serializers which first parse a file and finally serializes it to turtle. Because the used validation library only validates turtle.
