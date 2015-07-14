@@ -1,15 +1,16 @@
 (function(){
-	var feedback, text, alert, success, uploadFileValue, uploadError;
+	var feedback, text, alert, success, uploadFileValue, uploadError, url;
 
 	function init(){
+		alert = $("<div>", {class:"alert alert-danger", role:"alert"});
 		var tab1 = $("#tab1");
 		if(tab1){
-			
+			initValidateUrl();
 		}
 		var tab2 = $("#tab2");
 		if(tab2){
 			showUploadBtn();
-			//initValidateUpload();
+			initValidateUpload();
 		}
 
 		var tab3 = $("#tab3");
@@ -17,6 +18,51 @@
 			initValidateDirectInput();
 		}
 	}
+
+	// ==========================================================================================
+    // ========================================= TAB 1 ==========================================
+    // ==========================================================================================
+
+    var urlValue, urlFinal;
+
+    function initValidateUrl(){
+    	$("input[name='actionTab1']").on("click", validateUrlFields);
+    }
+
+    function validateUrlFields(){
+    	event.preventDefault();
+
+        clearBorders("", "tab2", "tab3");
+        clearFeedback();
+
+        if($(".tab1Input").val() == "" || $(".formatSelectTab1").val() == ""){
+            alert.text("Please fill in all the required fields to validate by URL.");  
+
+            validateField(".tab1Input");
+            validateField(".formatSelectTab1");
+
+            $(".startContent").prepend(alert);
+
+        }else{
+            url = $(".tab1Input").val();
+            getData(validateUrl);
+        }
+    }
+
+    function getData(callback){
+    	$.get(url, function (data) { 
+	    	urlValue = data;
+	    	callback();
+	    });
+    }
+
+    function validateUrl(){
+    	console.log(urlValue);
+    }
+
+	// ==========================================================================================
+    // ========================================= TAB 2 ==========================================
+    // ==========================================================================================
 
 	//tab2 - feedback which file
 	function showUploadBtn(){
@@ -35,6 +81,63 @@
         });
     }
 
+    //tab2
+	function initValidateUpload(){
+        $("input[name='actionTab2']").on("click", validateUpload);
+    }
+
+    //tab2
+    function validateUpload(event){
+        event.preventDefault();
+        var file = document.querySelector(".inputFile").files[0];
+        if(file){
+            var fileExt = document.querySelector(".inputFile").files[0].name.split('.').pop();
+        }
+
+        clearBorders("tab1", "", "tab3");
+        clearFeedback();
+
+        if($(".feedbackInput").val() == "" || $(".formatTab2").val() == "") {
+        	validateField(".feedbackInput");
+            validateField(".formatTab2");
+
+            uploadFileValue = "Please fill in all the required fields in order to validate by file upload.";
+            uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
+            uploadError.text(uploadFileValue);
+            $(".startContent").prepend(uploadError);
+        }else{
+        	var reader = new FileReader();
+            reader.readAsText(file, "UTF-8");
+            reader.onload = function (evt) {
+                uploadFileValue = evt.target.result;
+
+                selectParserTab2(fileExt);
+
+                $(".feedbackInput").css("border", "1px solid #CCC");
+            }
+            reader.onerror = function (evt) {
+                uploadFileValue = "The file cannot be validated.";
+                uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
+                uploadError.text(uploadFileValue);
+                $(".startContent").prepend(uploadError);
+            }
+        }
+    }
+
+    function selectParserTab2(fileExt){
+    	if(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld"){
+            convertFormat(rdf.parseJsonLd, uploadFileValue);
+        }else if(fileExt == "xml" && $(".formatTab2").val() == "xml"){
+            convertFormat(rdf.parseRdfXml, uploadFileValue);
+        }else if(fileExt == "ttl" && $(".formatTab2").val() == "ttl"){
+        	feedback = validate(uploadFileValue, afterValidate);
+        }
+    }
+
+    // ==========================================================================================
+    // ========================================= TAB 3 ==========================================
+    // ==========================================================================================
+
     //tab3
     function initValidateDirectInput(){
         $("input[name='actionTab3']").on("click", validateDirectInput);
@@ -43,12 +146,12 @@
     //tab3
     function validateDirectInput(event){
         event.preventDefault();
-        alert = $("<div>", {class:"alert alert-danger", role:"alert"});
 
+        clearBorders("tab1", "tab2", "");
         clearFeedback();
 
         if($(".tab3Textarea").val() == "" || $(".formatTab3").val() == ""){
-            alert.text("Please fill in the required fields by manually inserting your DCAT feed.");
+            alert.text("Please fill in the required fields for validating by manually input of the code.");
             $(".startContent").prepend(alert);
             
             validateField(".tab3Textarea");
@@ -56,9 +159,24 @@
 
         }else{
             text = $(".tab3Textarea").val();
-            selectParserTab1(text);
+            selectParserTab3(text);
         }
     }
+
+    //tab3
+    function selectParserTab3(text){
+    	if($(".formatTab3").val() == "jsonld"){
+            convertFormat(rdf.parseJsonLd, text);
+        }else if($(".formatTab3").val() == "xml"){
+            convertFormat(rdf.parseRdfXml, text);
+        }else if($(".formatTab3").val() == "ttl"){
+        	feedback = validate(text, afterValidate);
+        }
+    }
+
+    // ==========================================================================================
+    // =================================== GENERAL VALIDATE =====================================
+    // ==========================================================================================
 
     //general validate
     function validateField(field){
@@ -69,22 +187,13 @@
         }
     }
 
+    //general validate
     function convertFormat(parseFunction, fileValue){
         parseFunction(fileValue, function (graph) {
             rdf.serializeTurtle(graph, function(fileValue){
                 feedback = validate(fileValue, afterValidate);
             });
         });
-    }
-
-    function selectParserTab1(text){
-    	if($(".formatTab3").val() == "jsonld"){
-            convertFormat(rdf.parseJsonLd, text);
-        }else if($(".formatTab3").val() == "xml"){
-            convertFormat(rdf.parseRdfXml, text);
-        }else if($(".formatTab3").val() == "txt"){
-        	feedback = validate(text, afterValidate);
-        }
     }
 
     //general validate
@@ -97,6 +206,20 @@
 
         clearFeedback();
         showFeedback();
+    }
+
+    function clearBorders(tab1, tab2, tab3){
+    	if(tab1 == "tab1"){
+
+    	}
+    	if(tab2 == "tab2"){
+    		$(".feedbackInput").css("border", "1px solid #CCC");
+    		$(".formatTab2").css("border", "1px solid #CCC");
+    	}
+    	if(tab3 == "tab3"){
+    		$(".tab3Textarea").css("border", "1px solid #CCC");
+    		$(".formatTab3").css("border", "1px solid #CCC");
+    	}
     }
 
     //general validate
@@ -113,6 +236,7 @@
         }
     }
 
+    //general - validate
     function showErrorWarning(type, glyph, value, container){
         var rowStart = $("<div>", {class:"row start"});
         var start = $("<div>", {class:"col-md-12"});

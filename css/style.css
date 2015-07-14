@@ -68,7 +68,8 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button:
 #tab1 > form > div.form-group.col-sm-12,
 #tab2 > form > div.form-group.col-sm-12,
 #tab1 > form > div.form-group.col-sm-12.formatTab1 > div,
-#tab2 > form > div.form-group.col-sm-12 > div{
+#tab2 > form > div.form-group.col-sm-12 > div,
+.resetRight{
 	padding-right:0px;
 }
 
