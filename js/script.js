@@ -36,7 +36,7 @@
         clearFeedback();
 
         if($(".tab1Input").val() == "" || $(".formatSelectTab1").val() == ""){
-            alert.text("Please fill in all the required fields to validate by URL.");  
+            alert.text("Please fill in all the required fields to validate by URL.");
 
             validateField(".tab1Input");
             validateField(".formatSelectTab1");
@@ -50,14 +50,32 @@
     }
 
     function getData(callback){
-    	$.get(url, function (data) { 
+    	$.get(url, function (data){ 
 	    	urlValue = data;
 	    	callback();
+	    }).fail(function(){
+	    	alert.text("The URI you have entered is not valid."); 
+			$(".startContent").prepend(alert);
 	    });
     }
 
     function validateUrl(){
-    	console.log(urlValue);
+    	if(urlValue == ""){
+    		alert.text("The URI you have entered has nothing to validate."); 
+			$(".startContent").prepend(alert);
+    	}else{
+    		selectParserTab1(urlValue);
+    	}
+    }
+
+    function selectParserTab1(value){
+    	if($(".formatSelectTab1").val() == "jsonld"){
+            convertFormat(rdf.parseJsonLd, value);
+        }else if($(".formatSelectTab1").val() == "xml"){
+        	convertFormat(rdf.parseRdfXml, value);
+        }else if($(".formatSelectTab1").val() == "ttl"){
+        	feedback = validate(value, afterValidate);
+        }
     }
 
 	// ==========================================================================================
@@ -106,21 +124,26 @@
             uploadError.text(uploadFileValue);
             $(".startContent").prepend(uploadError);
         }else{
-        	var reader = new FileReader();
-            reader.readAsText(file, "UTF-8");
-            reader.onload = function (evt) {
-                uploadFileValue = evt.target.result;
+        	if($(".formatTab2").val() == fileExt){
+        		var reader = new FileReader();
+	            reader.readAsText(file, "UTF-8");
+	            reader.onload = function (evt) {
+	                uploadFileValue = evt.target.result;
 
-                selectParserTab2(fileExt);
+	                selectParserTab2(fileExt);
 
-                $(".feedbackInput").css("border", "1px solid #CCC");
-            }
-            reader.onerror = function (evt) {
-                uploadFileValue = "The file cannot be validated.";
-                uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
-                uploadError.text(uploadFileValue);
-                $(".startContent").prepend(uploadError);
-            }
+	                $(".feedbackInput").css("border", "1px solid #CCC");
+	            }
+	            reader.onerror = function (evt) {
+	                uploadFileValue = "The file cannot be validated.";
+	                uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
+	                uploadError.text(uploadFileValue);
+	                $(".startContent").prepend(uploadError);
+	            }
+        	}else{
+        		alert.text("Your chosen format is not the same as your inserted file");
+            	$(".startContent").prepend(alert);
+        	}
         }
     }
 
@@ -165,18 +188,28 @@
 
     //tab3
     function selectParserTab3(text){
-    	if($(".formatTab3").val() == "jsonld"){
-            convertFormat(rdf.parseJsonLd, text);
-        }else if($(".formatTab3").val() == "xml"){
-            convertFormat(rdf.parseRdfXml, text);
-        }else if($(".formatTab3").val() == "ttl"){
-        	feedback = validate(text, afterValidate);
-        }
+	    catchErrorTab3(".formatTab3", "xml", rdf.parseRdfXml, text);
+	    catchErrorTab3(".formatTab3", "jsonld", rdf.parseJsonLd, text);
+	    catchErrorTab3(".formatTab3", "ttl", rdf.parseTurtle, text);
+        // if($(".formatTab3").val() == "ttl"){
+        // 	feedback = validate(text, afterValidate);
+        // }
     }
 
     // ==========================================================================================
     // =================================== GENERAL VALIDATE =====================================
     // ==========================================================================================
+
+    function catchErrorTab3(tab, format, rdfFunction, value){
+    	if($(tab).val() == format){
+	    	try{
+	    		convertFormat(rdfFunction, value);
+	    	}catch(error){
+	    		alert.text("The format you inserted is not the same as the selected format.");
+				$(".startContent").prepend(alert);
+	    	}
+	    }
+    }
 
     //general validate
     function validateField(field){
@@ -189,11 +222,18 @@
 
     //general validate
     function convertFormat(parseFunction, fileValue){
-        parseFunction(fileValue, function (graph) {
-            rdf.serializeTurtle(graph, function(fileValue){
-                feedback = validate(fileValue, afterValidate);
-            });
-        });
+    	parseFunction(fileValue, function (graph) {
+    	try{
+    		
+	            rdf.serializeTurtle(graph, function(fileValue){
+	                feedback = validate(fileValue, afterValidate);
+	            });
+	        
+    	}catch(error){
+    		alert.text("The format you inserted is not the same as the selected format.");
+			$(".startContent").prepend(alert);
+    	}
+    	});
     }
 
     //general validate
