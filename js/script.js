@@ -102,10 +102,10 @@
 
     //tab2
     function validateUpload(event){
-        event.preventDefault();
-        var file = document.querySelector(".inputFile").files[0];
+        event.preventDefault(); 
+        var file = $(".inputFile")[0].files[0];
         if(file){
-            var fileExt = document.querySelector(".inputFile").files[0].name.split('.').pop();
+            var fileExt = file.name.split('.').pop();
         }
 
         clearBorders("tab1", "", "tab3");
@@ -114,7 +114,6 @@
         if($(".feedbackInput").val() == "" || $(".formatTab2").val() == "") {
         	validateField(".feedbackInput");
             validateField(".formatTab2");
-
             uploadFileValue = "Please fill in all the required fields in order to validate by file upload.";
             uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
             uploadError.text(uploadFileValue);
@@ -284,42 +283,27 @@
         container.append(rowStart);
     }
 
+    function showFeedBackMessage(element, valid, rest){
+    	element.text("Your DCAT - feed is " + valid + "valid. You have " + rest);
+        $(".startContent").prepend(element);
+    }
+
     //general validate
     function showFeedback(){
         var warningsContainer = $("<div>", {class:"container warnings"});
         var errorsContainer = $("<div>", {class:"container errors"});
+        var fErrors = feedback['errors'].length;
+        var fWarnings = feedback['warnings'].length;
 
-        if(feedback['errors'].length == 0 && feedback['warnings'].length == 0){
-            success.text("Your DCAT - feed is valid. You have no errors and no warnings.");
-            $(".startContent").prepend(success);
-        }else if(feedback['errors'].length != 0 && feedback['warnings'].length != 0){
-            if(feedback['errors'].length == 1 && feedback['warnings'].length == 1){
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and " + feedback['warnings'].length + " warning. You can find your error below the page.");
-            }else if(feedback["errors"].length == 1 && feedback["warnings"] > 1){
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and " + feedback['warnings'].length + " warnings. You can find your error below the page.");
-            }else if(feedback["errors"].length > 1 && feedback['warnings'].length == 1){
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and " + feedback['warnings'].length + " warning. You can find your error below the page.");
-            }else if(feedback['errors'].length > 1 && feedback['warnings'].length > 1){
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and " + feedback['warnings'].length + " warnings. You can find your error below the page.");
-            }
-            $(".startContent").prepend(alert);
-        }else if(feedback['errors'].length != 0 && feedback['warnings'].length == 0){
-            if(feedback['errors'].length == 1){
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " error and no warnings. You can find your error below the page.");
-            }else{
-                alert.text("Your DCAT - feed is not valid. You have " + feedback['errors'].length + " errors and no warnings. You can find your errors below the page.");
-            }
-            $(".startContent").prepend(alert);
-        }else if(feedback['errors'].length == 0 && feedback['warnings'].length != 0){
-            if(feedback['warnings'].length == 1){
-                warning.text("Your DCAT - feed is valid. You have no errors, but " + feedback['warnings'].length + " warning. You can see your warnings below the page.");  
-            }else{
-                warning.text("Your DCAT - feed is valid. You have no errors, but " + feedback['warnings'].length + " warnings. You can see your warnings below the page.");
-            }
-            $(".startContent").prepend(warning);
+        if(fErrors == 0 && fWarnings == 0){
+        	showFeedBackMessage(success, "", "no errors and no warnings");
+        }else if((fErrors != 0 && fWarnings != 0) || (fErrors != 0 && fWarnings == 0)){
+			showFeedBackMessage(alert, "not ", fErrors + " error(s) and " + fWarnings + " warning(s). You can find your error(s) or warning(s) below the page.");
+		}else if(fErrors == 0 && fWarnings != 0 ){
+			showFeedBackMessage(warning, "", "no errors, but " + fWarnings + " warning(s). You can see your warning(s) below the page.");
         }
 
-        if(feedback['warnings'].length != 0){
+        if(fWarnings != 0){
             var header2 = $("<h2>");
             header2.text("Warnings");
             warningsContainer.append(header2);
@@ -329,7 +313,7 @@
             warningsContainer.insertAfter($(".startContent"));
         }
 
-        if(feedback['errors'].length != 0){         
+        if(fErrors != 0){         
             var header = $("<h2>");
             header.text("Errors");
             errorsContainer.append(header);
