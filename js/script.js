@@ -69,13 +69,9 @@
     }
 
     function selectParserTab1(value){
-    	if($(".formatSelectTab1").val() == "jsonld"){
-            convertFormat(rdf.parseJsonLd, value);
-        }else if($(".formatSelectTab1").val() == "xml"){
-        	convertFormat(rdf.parseRdfXml, value);
-        }else if($(".formatSelectTab1").val() == "ttl"){
-        	feedback = validate(value, afterValidate);
-        }
+        catchError($(".formatSelectTab1").val() == "xml", rdf.parseRdfXml, value);
+	    catchError($(".formatSelectTab1").val() == "jsonld", rdf.parseJsonLd, value);
+	    catchError($(".formatSelectTab1").val() == "ttl", rdf.parseTurtle, value);
     }
 
 	// ==========================================================================================
@@ -129,9 +125,7 @@
 	            reader.readAsText(file, "UTF-8");
 	            reader.onload = function (evt) {
 	                uploadFileValue = evt.target.result;
-
 	                selectParserTab2(fileExt);
-
 	                $(".feedbackInput").css("border", "1px solid #CCC");
 	            }
 	            reader.onerror = function (evt) {
@@ -148,13 +142,9 @@
     }
 
     function selectParserTab2(fileExt){
-    	if(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld"){
-            convertFormat(rdf.parseJsonLd, uploadFileValue);
-        }else if(fileExt == "xml" && $(".formatTab2").val() == "xml"){
-            convertFormat(rdf.parseRdfXml, uploadFileValue);
-        }else if(fileExt == "ttl" && $(".formatTab2").val() == "ttl"){
-        	feedback = validate(uploadFileValue, afterValidate);
-        }
+    	catchError(fileExt == "xml" && $(".formatTab2").val() == "xml", rdf.parseRdfXml, uploadFileValue);
+	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue);
+	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "ttl", rdf.parseTurtle, uploadFileValue);
     }
 
     // ==========================================================================================
@@ -188,27 +178,26 @@
 
     //tab3
     function selectParserTab3(text){
-	    catchErrorTab3(".formatTab3", "xml", rdf.parseRdfXml, text);
-	    catchErrorTab3(".formatTab3", "jsonld", rdf.parseJsonLd, text);
-	    catchErrorTab3(".formatTab3", "ttl", rdf.parseTurtle, text);
-        // if($(".formatTab3").val() == "ttl"){
-        // 	feedback = validate(text, afterValidate);
-        // }
+	    catchError($(".formatTab3").val() == "xml", rdf.parseRdfXml, text);
+	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text);
+	    catchError($(".formatTab3").val() == "ttl", rdf.parseTurtle, text);
     }
 
     // ==========================================================================================
     // =================================== GENERAL VALIDATE =====================================
     // ==========================================================================================
 
-    function catchErrorTab3(tab, format, rdfFunction, value){
-    	if($(tab).val() == format){
-	    	try{
-	    		convertFormat(rdfFunction, value);
-	    	}catch(error){
-	    		alert.text("The format you inserted is not the same as the selected format.");
+    //general validate
+    function catchError(condition, rdfFunction, value){
+    	if(condition){
+    		try{
+    			convertFormat(rdfFunction, value);
+    		}catch(error){
+    			alert.text("The format you inserted is not the same as the selected format.");
 				$(".startContent").prepend(alert);
-	    	}
-	    }
+    		}
+            
+        }
     }
 
     //general validate
@@ -223,16 +212,14 @@
     //general validate
     function convertFormat(parseFunction, fileValue){
     	parseFunction(fileValue, function (graph) {
-    	try{
-    		
+	    	try{
 	            rdf.serializeTurtle(graph, function(fileValue){
 	                feedback = validate(fileValue, afterValidate);
-	            });
-	        
-    	}catch(error){
-    		alert.text("The format you inserted is not the same as the selected format.");
-			$(".startContent").prepend(alert);
-    	}
+	            });  
+	    	}catch(error){
+	    		alert.text("The format you inserted is not the same as the selected format.");
+				$(".startContent").prepend(alert);
+	    	}
     	});
     }
 
@@ -250,7 +237,8 @@
 
     function clearBorders(tab1, tab2, tab3){
     	if(tab1 == "tab1"){
-
+    		$(".tab1Input").css("border", "1px solid #CCC");
+    		$(".formatSelectTab1").css("border", "1px solid #CCC");
     	}
     	if(tab2 == "tab2"){
     		$(".feedbackInput").css("border", "1px solid #CCC");
