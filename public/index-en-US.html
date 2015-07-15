@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>DCAT - validator</title>
-
     <!-- Bootstrap -->
     <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
@@ -22,18 +21,16 @@
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+            <span class="glyphicon glyphicon-cog"></span>
           </button>
           <a class="navbar-brand" href="index.html">
-            <span class="navbar-name">DCAT - validator</span>
+            <span class="navbar-name">test</span>
           </a>
         </div>
         <center> 
           <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
             <ul class="nav navbar-nav navbar-right">
-              <li class="engLan"><a href="index-{en}.html">EN</a></li>
+              <li class="engLan"><a href="#">EN</a></li>
               <li class="nlLan"><a href="#">NL</a></li>
               <li class="frLan"><a href="#">FR</a></li>
             </ul>
@@ -92,10 +89,10 @@
                       </select>
                     </div>
                   </div>
-                  <div class="form-group col-sm-12">
+                  <div class="form-group">
                     <label class="tab2FormatLabel" for="format">Upload:</label>
-                    <div class="row">
-                      <div class="col-sm-1">
+                    <div class="row browse">
+                      <div class="browseBtn">
                         <span class="colinput-group-button">
                           <span class="btn btn-primary btn-file">
                             Browse
@@ -103,7 +100,7 @@
                           </span>
                         </span>
                       </div>
-                      <div class="col-sm-11">
+                      <div class="browseOutput">
                         <input type="text" placeholder="Select a file" class="focus form-control feedbackInput" value="" readonly />
                       </div>
                     </div>

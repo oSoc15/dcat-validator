@@ -13,10 +13,10 @@ gulp.task('build:localize', function() {
     .pipe(gulp.dest(dest));
 });
 
-gulp.task('watch', function() {
-  gulp.watch('./index.html', ['build:localize']);
-});
+// gulp.task('watch', function() {
+//   gulp.watch('./index.html', ['build:localize']);
+// });
 
 gulp.task('default', function() {
-    gulp.start('watch');
+    gulp.start('build:localize');
 });

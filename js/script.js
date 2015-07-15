@@ -1,5 +1,5 @@
 (function(){
-	var feedback, text, alert, success, uploadFileValue, uploadError, url;
+	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, list2;
 
 	function init(){
 		alert = $("<div>", {class:"alert alert-danger", role:"alert"});
@@ -264,7 +264,8 @@
     }
 
     //general - validate
-    function showErrorWarning(type, glyph, value, container){
+    function showErrorWarning(type, glyph, value, listContainer){
+        var listItem = $("<li>");
         var rowStart = $("<div>", {class:"row start"});
         var start = $("<div>", {class:"col-md-12"});
         var row = $("<div>", {class:"row"});
@@ -279,8 +280,8 @@
         row.append(column);
         column.append(tumbnail);
         tumbnail.append(warning);
-
-        container.append(rowStart);
+        listItem.append(rowStart);
+        listContainer.append(listItem);
     }
 
     //general - validate
@@ -307,9 +308,11 @@
         if(fWarnings != 0){
             var header2 = $("<h2>");
             header2.text("Warnings");
+            list2 = $("<ul>");
             warningsContainer.append(header2);
+            warningsContainer.append(list2);
             $.each(feedback["warnings"], function(key, value){
-                showErrorWarning("warning", "warning", value, warningsContainer);
+                showErrorWarning("warning", "warning", value, list2);
             });
             warningsContainer.insertAfter($(".startContent"));
         }
@@ -317,9 +320,11 @@
         if(fErrors != 0){         
             var header = $("<h2>");
             header.text("Errors");
+            list = $("<ul>");
             errorsContainer.append(header);
+            errorsContainer.append(list);
             $.each(feedback["errors"], function(key, value){
-                showErrorWarning("error", "remove", value, errorsContainer);                
+                showErrorWarning("error", "remove", value, list);                
             });
             if(feedback['warnings'].length != 0){
                 errorsContainer.insertAfter(warningsContainer);
