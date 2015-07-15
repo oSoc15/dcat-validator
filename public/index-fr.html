@@ -7,11 +7,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>DCAT - validator</title>
     <!-- Bootstrap -->
-    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- Self written css (not bootstrap) -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
   </head>
   <body>
 <!-- trace:index.html -->
@@ -30,9 +30,9 @@
         <center> 
           <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
             <ul class="nav navbar-nav navbar-right">
-              <li class="engLan"><a href="#">EN</a></li>
-              <li class="nlLan"><a href="#">NL</a></li>
-              <li class="frLan"><a href="#">FR</a></li>
+              <li class="engLan"><a href="index-en.html">EN</a></li>
+              <li class="nlLan"><a href="index-nl.html">NL</a></li>
+              <li class="frLan"><a href="index-fr.html">FR</a></li>
             </ul>
           </div>
         </center>
@@ -46,14 +46,14 @@
           <div class="tabbable">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#tab1" data-toggle="tab">Par URI</a></li>
-              <li><a href="#tab2" data-toggle="tab">Télécharger</a></li>
+              <li><a href="#tab2" data-toggle="tab">Fichier</a></li>
               <li><a href="#tab3" data-toggle="tab">Insérez code source</a></li>
             </ul>
             <div class="tab-content page-content">
               <div class="tab-pane active" id="tab1">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group col-sm-12 formatTab1">
-                    <label class="tab1FormatLabel" for="format">Sélectionner le format:</label>
+                    <label class="tab1FormatLabel" for="format">Sélectionnez le format:</label>
                     <div class="col-sm-12">
                       <select name="formatSelectTab1" class="form-control focus formatSelectTab1">
                         <option value=""></option>
@@ -79,7 +79,7 @@
               <div class="tab-pane" id="tab2">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">Sélectionner le format:</label>
+                    <label class="tab2FormatLabel" for="format">Sélectionnez le format:</label>
                     <div class="col-sm-12">
                       <select name="formatTab2" class="form-control focus formatTab2">
                         <option value=""></option>
@@ -90,11 +90,11 @@
                     </div>
                   </div>
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">Télécharger:</label>
+                    <label class="tab2FormatLabel" for="format">Transférez:</label>
                       <div class="input-group inputTab2">
                         <span class="input-group-btn">
                             <span class="btn btn-primary btn-file">
-                                Browse&hellip; <input class="inputFile" type="file" multiple />
+                                Naviguez&hellip;<input class="inputFile" type="file" multiple />
                             </span>
                         </span>
                         <input type="text" class="form-control feedbackInput" placeholder="Sélectionnez un fichier" readonly>
@@ -110,7 +110,7 @@
               <div class="tab-pane" id="tab3">
                 <form method="post" action="">
                   <div class="form-group formatBox">
-                    <label class="tab3FormatLabel" for="format">Sélectionner le format:</label>
+                    <label class="tab3FormatLabel" for="format">Sélectionnez le format:</label>
                     <div class="col-sm-12">
                       <select name="formatTab3" class="form-control focus formatTab3">
                         <option value=""></option>
@@ -142,16 +142,16 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- jQuery -->
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- RDF - Ext to convert RDF formats to turtle -->
-    <script src="node_modules/rdf-ext/dist/rdf-ext.js"></script>
+    <script src="../node_modules/rdf-ext/dist/rdf-ext.js"></script>
     <!-- N3 node.js library -->
-    <script src="js/bundle.js"></script>
+    <script src="../js/bundle.js"></script>
     <!-- Self written javascript -->
-    <script src="js/script.js"></script>
+    <script src="../js/script.js"></script>
   </body>
 </html>
