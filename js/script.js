@@ -283,6 +283,7 @@
         container.append(rowStart);
     }
 
+    //general - validate
     function showFeedBackMessage(element, valid, rest){
     	element.text("Your DCAT - feed is " + valid + "valid. You have " + rest);
         $(".startContent").prepend(element);
