@@ -17,7 +17,16 @@
 		if(tab3){
 			initValidateDirectInput();
 		}
-	}  
+
+        $(document).on({
+            ajaxStart: function() { 
+                $(".spinner").css("display", "block");
+            },
+            ajaxStop: function() { 
+                $(".spinner").css("display", "none"); 
+            }    
+        });
+	}
 
 	// ==========================================================================================
     // ========================================= TAB 1 ==========================================
@@ -50,9 +59,10 @@
     }
 
     function getData(callback){
-    	$.get(url, function (data){ 
+    	$.get(url, function (data){
 	    	urlValue = data;
 	    	callback();
+            
 	    }).fail(function(){
 	    	alert.text("The URI you have entered is not valid."); 
 			$(".startContent").prepend(alert);
@@ -216,7 +226,9 @@
     function convertFormat(parseFunction, fileValue, format, format2){
     	parseFunction(fileValue, function (graph) {
 	    	try{
+                $(".spinner").css("display", "block");
 	            rdf.serializeTurtle(graph, function(fileValue){
+                    $(".spinner").css("display", "block");
 	                feedback = validate(fileValue, afterValidate);
 	            });  
 	    	}catch(error){

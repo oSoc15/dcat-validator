@@ -221,6 +221,18 @@ footer p{
   font-size:0.8em;
 }
 
+/* ------ SPINNER ------ */
+.spinner{
+  display:none;
+  text-align:center;
+}
+
+.spinner i{
+  color:#009688;
+  padding:20px 0px;
+  font-size:2.0em;
+}
+
 /* ------------------------------------ */
 /* ----------- MEDIA QUERIES ---------- */
 /* ------------------------------------ */
