@@ -51,8 +51,8 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button:
     background-color:#00AB9B;
 }
 
-.glyphicon-cog{
-    color:#FFF;
+body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button > span{
+    background-color:#FFF;
 }
 
 /* ------ TAB 1 INPUT ------ */
