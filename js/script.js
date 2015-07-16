@@ -29,7 +29,7 @@
     	$("input[name='actionTab1']").on("click", validateUrlFields);
     }
 
-    function validateUrlFields(){
+    function validateUrlFields(event){
     	event.preventDefault();
 
         clearBorders("", "tab2", "tab3");
@@ -79,7 +79,7 @@
     // ==========================================================================================
 
 	//tab2 - feedback which file
-	function showUploadBtn(){
+	function showUploadBtn(event){
         $(document).on('change', '.btn-file :file', function() {
             var input = $(this),
                 numFiles = input.get(0).files ? input.get(0).files.length : 1,

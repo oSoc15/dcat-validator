@@ -7,11 +7,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>DCAT - validator</title>
     <!-- Bootstrap -->
-    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- Self written css (not bootstrap) -->
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
 
@@ -25,7 +25,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="index.html">
-            <span class="navbar-name">${{index.mainHeading}}$</span>
+            <span class="navbar-name">DCAT - validator</span>
           </a>
         </div>
         <center> 
@@ -43,33 +43,34 @@
         <div class="col-md-12">
           <div class="tabbable">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab1" data-toggle="tab">${{index.tab1Title}}$</a></li>
-              <li><a href="#tab2" data-toggle="tab">${{index.tab2Title}}$</a></li>
-              <li><a href="#tab3" data-toggle="tab">${{index.tab3Title}}$</a></li>
+              <li class="active"><a href="#tab1" data-toggle="tab">By URI</a></li>
+              <li><a href="#tab2" data-toggle="tab">By upload</a></li>
+              <li><a href="#tab3" data-toggle="tab">By direct input</a></li>
             </ul>
             <div class="tab-content page-content">
               <div class="tab-pane active" id="tab1">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group col-sm-12 formatTab1">
-                    <label class="tab1FormatLabel" for="format">${{index.tab1Label1}}$</label>
+                    <label class="tab1FormatLabel" for="format">Select the format:</label>
                     <div class="col-sm-12">
                       <select name="formatSelectTab1" class="form-control focus formatSelectTab1">
                         <option value=""></option>
-                        <option value="xml">${{index.tab1Format1}}$</option>
-                        <option value="jsonld">${{index.tab1Format2}}$</option>
-                        <option value="ttl">${{index.tab1Format3}}$</option>
+                        <option value="xml">XML</option>
+                        <option value="jsonld">JSON-LD</option>
+                        <option value="ttl">Turtle</option>
                       </select>
+                      <div class="dblarrow"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
-                    <label class="tab1FormatLabel" for="format">${{index.tab1Label2}}$</label>
+                    <label class="tab1FormatLabel" for="format">URI:</label>
                     <div class="col-sm-12">
-                       <input type="text" class="focus form-control tab1Input" name="uri" placeholder="${{index.tab1Label2Placeholder}}$" aria-describedby="basic-addon1">
+                       <input type="text" class="focus form-control tab1Input" name="uri" placeholder="Enter your URI here, example: http://demo.thedatatank.com/api/dcat" aria-describedby="basic-addon1">
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="col-sm-12">
-                       <input type="submit" name="actionTab1" value="${{index.tab1Btn}}$" class="btn btn-primary validateBtn" />
+                       <input type="submit" name="actionTab1" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
@@ -77,30 +78,31 @@
               <div class="tab-pane" id="tab2">
                 <form class="form-horizontal" method="post" action="">
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">${{index.tab2Label1}}$</label>
+                    <label class="tab2FormatLabel" for="format">Select the format:</label>
                     <div class="col-sm-12">
                       <select name="formatTab2" class="form-control focus formatTab2">
                         <option value=""></option>
-                        <option value="xml">${{index.tab2Format1}}$</option>
-                        <option value="jsonld">${{index.tab2Format2}}$</option>
-                        <option value="ttl">${{index.tab2Format3}}$</option>
+                        <option value="xml">XML</option>
+                        <option value="jsonld">JSON-LD</option>
+                        <option value="ttl">Turtle</option>
                       </select>
+                      <div class="dblarrow"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">${{index.tab2Label2}}$</label>
+                    <label class="tab2FormatLabel" for="format">Upload:</label>
                       <div class="input-group inputTab2">
                         <span class="input-group-btn">
                             <span class="btn btn-primary btn-file">
-                                ${{index.tab2BrowseBtn}}$<input class="inputFile" type="file" multiple />
+                                Browse&hellip;<input class="inputFile" type="file" multiple />
                             </span>
                         </span>
-                        <input type="text" class="form-control feedbackInput" placeholder="${{index.tab2Label2Placeholder}}$" readonly>
+                        <input type="text" class="form-control feedbackInput" placeholder="Select a file" readonly>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="col-sm-12">
-                       <input type="submit" name="actionTab2" value="${{index.tab2Btn}}$" class="btn btn-primary validateBtn" />
+                       <input type="submit" name="actionTab2" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
@@ -108,25 +110,26 @@
               <div class="tab-pane" id="tab3">
                 <form method="post" action="">
                   <div class="form-group formatBox">
-                    <label class="tab3FormatLabel" for="format">${{index.tab3Label1}}$</label>
+                    <label class="tab3FormatLabel" for="format">Select the format:</label>
                     <div class="col-sm-12">
                       <select name="formatTab3" class="form-control focus formatTab3">
                         <option value=""></option>
-                        <option value="xml">${{index.tab3Format1}}$</option>
-                        <option value="jsonld">${{index.tab3Format2}}$</option>
-                        <option value="ttl">${{index.tab3Format3}}$</option>
+                        <option value="xml">XML</option>
+                        <option value="jsonld">JSON-LD</option>
+                        <option value="ttl">Turtle</option>
                       </select>
+                      <div class="dblarrow2"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="directInputLabel" for="direct_input">${{index.tab3Label2}}$</label>
+                    <label class="directInputLabel" for="direct_input">Direct input:</label>
                     <div class="col-sm-12">
-                      <textarea class="form-control tab3Textarea" placeholder="${{index.tab3Label2Placeholder}}$" rows="20" id="direct_input"></textarea>
+                      <textarea class="form-control tab3Textarea" placeholder="Enter your markup here" rows="20" id="direct_input"></textarea>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="">
-                       <input type="submit" name="actionTab3" value="${{index.tab3Btn}}$" class="btn btn-primary validateBtn" />
+                       <input type="submit" name="actionTab3" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
@@ -146,16 +149,16 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- jQuery -->
-    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <!-- RDF - Ext to convert RDF formats to turtle -->
-    <script src="../node_modules/rdf-ext/dist/rdf-ext.js"></script>
+    <script src="node_modules/rdf-ext/dist/rdf-ext.js"></script>
     <!-- N3 node.js library -->
-    <script src="../js/bundle.js"></script>
+    <script src="js/dcat-validator.bundle.js"></script>
     <!-- Self written javascript -->
-    <script src="../js/script.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>

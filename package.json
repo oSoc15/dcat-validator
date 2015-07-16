@@ -5,13 +5,10 @@
   "main": "validator.js",
   "dependencies": {
     "bootstrap": "^3.3.5",
-    "gulp": "^3.9.0",
-    "gulp-html-i18n": "^0.2.3",
     "jquery": "^2.1.4",
     "rdf-ext": "^0.2.4"
   },
   "devDependencies": {
-    "gulp": "^3.9.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

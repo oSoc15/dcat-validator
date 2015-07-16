@@ -14,7 +14,8 @@ a{
 }
 
 a:hover{
-	color:#333;
+	color:#00AB9B;
+  text-decoration:none;
 }
 
 .heading a span, .navbar-default .navbar-nav li a{
@@ -136,34 +137,88 @@ input[readonly] {
 
 /* ------ ERRORS ------ */
 .errors .error, .warnings .warning{
-    border:1px solid #ddd;
-    padding:20px 40px;
-    margin-bottom:20px;
-    background-color:#f5f5f5;
+  border:1px solid #ddd;
+  padding:20px 40px;
+  margin-bottom:20px;
+  background-color:#f5f5f5;
 }
 
 .errors .error p, .warnings .warning p{
-    margin-bottom:0px;
+  margin-bottom:0px;
 }
 
 .errors .error span, .warnings .warning span{
-    margin-right:20px;
+  margin-right:20px;
 }
 
 .glyphicon-remove-sign{
-    color:#A74444;
+  color:#A74444;
 }
 
 .glyphicon-warning-sign{
-    color:#BC935A;
+  color:#BC935A;
 }
 
 .errors ul, .warnings ul{
-    padding-left:0px;
+  padding-left:0px;
 }
 
 .errors ul li, .warnings ul li{
-    list-style-type:none;
+  list-style-type:none;
+}
+
+/* ------ SELECT BOX + DRAW ARROWS (support for safari) ------ */
+.dblarrow, .dblarrow2{
+  display: inline-block;
+  position:absolute;
+  top:10px;
+  right:10px;
+}
+
+.dblarrow b, .dblarrow2 b{
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.dblarrow i, .dblarrow2 i{
+  width: 0; 
+  height: 0; 
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  display: block;
+}
+
+select,
+select option{
+  background: transparent;
+}
+select{
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}
+
+.dblarrow2{
+  right:25px;
+}
+
+#tab2 select.formatTab2{
+  padding-left:12px;
+}
+
+/* ------ FOOTER ------ */
+.footerCont{
+  margin-top:40px;
+  color:#9B9B9B;
+}
+
+footer p{
+  font-size:0.8em;
 }
 
 /* ------------------------------------ */
@@ -171,15 +226,19 @@ input[readonly] {
 /* ------------------------------------ */
 @media screen and (max-width: 768px) {
 
-    #tab1 > form > div.form-group.col-sm-12,
-    #tab2 > form > div.form-group.col-sm-12,
-    #tab1 > form > div.form-group.col-sm-12.formatTab1 > div,
-    #tab2 > form > div.form-group.col-sm-12 > div{
-        padding-right:15px;
-    }
+  #tab1 > form > div.form-group.col-sm-12,
+  #tab2 > form > div.form-group.col-sm-12,
+  #tab1 > form > div.form-group.col-sm-12.formatTab1 > div,
+  #tab2 > form > div.form-group.col-sm-12 > div{
+      padding-right:15px;
+  }
 
-    .formatBox{
-        margin-bottom:16px;
-    }
+  .formatBox{
+      margin-bottom:16px;
+  }
+
+  .dblarrow{
+    right:25px;
+  }
 
 }
