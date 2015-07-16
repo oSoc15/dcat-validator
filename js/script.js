@@ -236,6 +236,7 @@
                 $(format).css("border", "1px solid #D75452");
                 $(format2).css("border", "1px solid #CCC");
 				$(".startContent").prepend(alert);
+                $(".spinner").css("display", "none");
 	    	}
     	});
     }
@@ -246,6 +247,7 @@
         success = $("<div>", {class:"alert alert-success", role:"alert"});
         warning = $("<div>", {class:"alert alert-warning", role:"alert"});
         clearBorders("tab1", "tab2", "tab3");
+        $(".spinner").css("display", "none");
 
         clearFeedback();
         showFeedback();
