@@ -1,5 +1,6 @@
 (function(){
 	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns;
+    var i = 0;
 
 	function init(){
 		alert = $("<div>", {class:"alert alert-danger", role:"alert"});
@@ -330,25 +331,31 @@
     }
 
     //general - validate
-    function showErrorWarning(value, list){
-        // var rowStart = $("<div>", {class:"row start"});
-        // var start = $("<div>", {class:"col-md-12"});
-        // var row = $("<div>", {class:"row"});
-        // var column = $("<div>", {class:"col-sm-12 col-lg-12 col-md-12"});
-        // var tumbnail = $("<div>", {class:"tumbnail " + type});
-        // var errorExpand = $("<p>", {class:"errorExpandable"});
-        // error.append('<span class="glyphicon glyphicon-' + glyph + '-sign"></span>');
-        // errorExpand.append(value2);
-        // errorExpand.append(value2);
+    function showErrorWarning(type, container, glyph){
+        for(message in feedback[type]){
+            i++;
+            var panel = $("<div>", {class:"panel panel-default"});
+            var panelBody = $("<div>", {class:"panel-body down" + i});
+            var panelFooter = $("<div>", {class:"panel-footer panel-footer-down" + i});
+            panel.append(panelBody);
+            panel.append(panelFooter);
+            container.append(panel);
+            var list2 = $("<ul>", {class:"list"});
+            panelFooter.append(list2);
+            var error = $ ("<p>", {class:"errorTitle"});
+            var expandError = $('<span></span>', {class:"glyphicon glyphicon-menu-down"});
+            error.append('<span class="glyphicon glyphicon-' + glyph +'-sign"></span>');
+            error.append("<strong>Resource: </strong>" + message);
+            error.append(expandError);
+            panelBody.append(error);
 
-        // rowStart.append(start);
-        // start.append(row);
-        // row.append(column);
-        // column.append(tumbnail);
-        // tumbnail.append(error);
-        // tumbnail.append(errorExpand);
-        // listItem.append(rowStart);
-        // listContainer.append(listItem);
+            for(message2 in feedback[type][message]){
+                var listItem = $("<li>");
+                listItem.append(feedback[type][message][message2].error);
+                list2.append(listItem);
+            }
+
+        }
     }
 
     //general validate
@@ -370,59 +377,33 @@
             scrollTop: $(".alert").offset().top
         }, 500);
 
-        var i = 0;
         if(fWarnings != 0){
             var header2 = $("<h2>");
             header2.text("Warnings");
             warningsContainer.append(header2);
-            for(warning in feedback["warnings"]){
-                i++;
-                var panel = $("<div>", {class:"panel panel-default"});
-                var panelBody = $("<div>", {class:"panel-body down" + i});
-                var panelFooter = $("<div>", {class:"panel-footer panel-footer-down" + i});
-                panel.append(panelBody);
-                panel.append(panelFooter);
-                warningsContainer.append(panel);
-                var list2 = $("<ul>", {class:"list"});
-                panelFooter.append(list2);
-                var error = $ ("<p>", {class:"errorTitle"});
-                var expandError = $('<span></span>', {class:"glyphicon glyphicon-menu-down"});
-                error.append('<span class="glyphicon glyphicon-warning-sign"></span>');
-                error.append("<strong>Resource: </strong>" + warning);
-                error.append(expandError);
-                panelBody.append(error);
+            
+            showErrorWarning("warnings", warningsContainer, "warning");
 
-                for(warning2 in feedback["warnings"][warning]){
-                    var listItem = $("<li>");
-                    listItem.append(feedback["warnings"][warning][warning2].error);
-                    list2.append(listItem);
-                }
-
-            }
             warningsContainer.insertAfter(elementContainer);
-
-            expandBtns = document.querySelectorAll(".panel-body");
-            if(expandBtns){
-                dropDown(expandBtns);
-            } 
         }
 
         if(fErrors != 0){         
             var header = $("<h2>");
             header.text("Errors");
-            list = $("<ul>");
             errorsContainer.append(header);
-            errorsContainer.append(list);
-            for(error in feedback["errors"]){
-                for(error2 in feedback["errors"][error]){
-                    showErrorWarning("error", "remove", error, feedback["errors"][error][error2].error, list);
-                }
-            }
+
+            showErrorWarning("errors", errorsContainer, "remove");
+
             if(feedback['warnings'].length != 0){
                 errorsContainer.insertAfter(warningsContainer);
             }else{
                 errorsContainer.insertAfter(elementContainer);
             }
+        }
+
+        expandBtns = document.querySelectorAll(".panel-body");
+        if(expandBtns){
+            dropDown(expandBtns);
         }
     }
 

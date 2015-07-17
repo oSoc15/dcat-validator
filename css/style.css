@@ -156,13 +156,13 @@ input[readonly] {
   margin-right:20px;
 }
 
-.glyphicon-remove-sign{
-  color:#A74444;
-}
-
-.glyphicon-warning-sign{
+.glyphicon-warning-sign, .glyphicon-remove-sign{
   color:#BC935A;
   margin-right:30px;
+}
+
+.glyphicon-remove-sign{
+  color:#A74444;
 }
 
 .errors ul, .warnings ul{
@@ -178,7 +178,7 @@ div.container.warnings > h2{
   margin-top:0px;
 }
 
-div.container.warnings ul{
+div.container.warnings ul, div.container.errors ul{
   margin-left:45px;
 }
 
