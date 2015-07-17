@@ -58,7 +58,7 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button 
 
 /* ------ START CONTENT ------ */
 .startContent, .startContent > p{
-  margin-bottom:20px;
+  margin-bottom:40px;
 }
 
 /* ------ TAB 1 INPUT ------ */
@@ -273,9 +273,16 @@ footer p{
   margin:20px 0px 0px 35px;
 }
 
-.glyphicon-menu-down{
+.glyphicon-chevron-up, .glyphicon-chevron-down{
   float:right;
-  margin-top:;
+  color:#009688;
+}
+.panel .glyphicon-chevron-down {
+  transition: transform .2s;
+}
+
+.down .glyphicon-chevron-down {
+  transform: rotate(180deg);
 }
 
 /* ------------------------------------ */

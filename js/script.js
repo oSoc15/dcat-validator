@@ -1,5 +1,5 @@
 (function(){
-	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns;
+	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns, panelFooters;
     var i = 0;
 
 	function init(){
@@ -27,7 +27,7 @@
             ajaxStop: function() { 
                 $(".spinner").css("display", "none"); 
             }    
-        }); 
+        });
 	}
 
 	// ==========================================================================================
@@ -343,7 +343,7 @@
             var list2 = $("<ul>", {class:"list"});
             panelFooter.append(list2);
             var error = $ ("<p>", {class:"errorTitle"});
-            var expandError = $('<span></span>', {class:"glyphicon glyphicon-menu-down"});
+            var expandError = $('<span></span>', {class:"glyphicon arrow glyphicon-chevron-down"});
             error.append('<span class="glyphicon glyphicon-' + glyph +'-sign"></span>');
             error.append("<strong>Resource: </strong>" + message);
             error.append(expandError);
@@ -354,7 +354,6 @@
                 listItem.append(feedback[type][message][message2].error);
                 list2.append(listItem);
             }
-
         }
     }
 
@@ -394,23 +393,28 @@
 
             showErrorWarning("errors", errorsContainer, "remove");
 
-            if(feedback['warnings'].length != 0){
-                errorsContainer.insertAfter(warningsContainer);
-            }else{
-                errorsContainer.insertAfter(elementContainer);
-            }
+            errorsContainer.insertAfter(elementContainer);
         }
 
+        panelFooters = document.querySelectorAll(".panel-footer");
+        if(panelFooters){
+            [].forEach.call(panelFooters, function(footer){
+                $(footer).hide();
+            });
+        }
         expandBtns = document.querySelectorAll(".panel-body");
         if(expandBtns){
             dropDown(expandBtns);
         }
     }
 
+    //general validate
     function dropDown(array){
         [].forEach.call(array, function(btn){
             btn.addEventListener("click", function(event){
+                $(btn).parent('.panel').toggleClass('down');
                 var panelFootName = event.currentTarget.getAttribute('class').split(' ')[1];
+                var glyph = event.currentTarget.querySelector(".arrow")
                 $(".panel-footer-" + panelFootName).slideToggle("fast");
             });
         });
