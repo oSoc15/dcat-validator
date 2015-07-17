@@ -278,10 +278,18 @@ footer p{
   color:#009688;
 }
 .panel .glyphicon-chevron-down {
+  -ms-transition: transform .2s;
+  -o-transition: transform .2s;
+  -moz-transition: transform .2s;
+  -webkit-transition: transform .2s;
   transition: transform .2s;
 }
 
 .down .glyphicon-chevron-down {
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 

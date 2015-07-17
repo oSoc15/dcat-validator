@@ -338,21 +338,28 @@
             var panelBody = $("<div>", {class:"panel-body down" + i});
             var panelFooter = $("<div>", {class:"panel-footer panel-footer-down" + i});
             panel.append(panelBody);
-            panel.append(panelFooter);
+            if(feedback[type][message].length != 0){
+                panel.append(panelFooter);
+                var list2 = $("<ul>", {class:"list"});
+                panelFooter.append(list2);
+            }
             container.append(panel);
-            var list2 = $("<ul>", {class:"list"});
-            panelFooter.append(list2);
+            
             var error = $ ("<p>", {class:"errorTitle"});
-            var expandError = $('<span></span>', {class:"glyphicon arrow glyphicon-chevron-down"});
             error.append('<span class="glyphicon glyphicon-' + glyph +'-sign"></span>');
             error.append("<strong>Resource: </strong>" + message);
-            error.append(expandError);
+            if(feedback[type][message].length != 0){
+                var expandError = $('<span></span>', {class:"glyphicon arrow glyphicon-chevron-down"});
+                error.append(expandError);
+            }
             panelBody.append(error);
 
             for(message2 in feedback[type][message]){
                 var listItem = $("<li>");
                 listItem.append(feedback[type][message][message2].error);
-                list2.append(listItem);
+                if(feedback[type][message].length != 0){
+                    list2.append(listItem);
+                }
             }
         }
     }
@@ -390,6 +397,7 @@
             var header = $("<h2>");
             header.text("Errors");
             errorsContainer.append(header);
+            console.log(feedback);
 
             showErrorWarning("errors", errorsContainer, "remove");
 
