@@ -366,6 +366,10 @@
 			showFeedBackMessage(warning, "", "no errors, but " + fWarnings + " warning(s). You can see your warning(s) below the page.");
         }
 
+        $('html, body').animate({
+            scrollTop: $(".alert").offset().top
+        }, 500);
+
         var i = 0;
         if(fWarnings != 0){
             var header2 = $("<h2>");
