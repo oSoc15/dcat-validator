@@ -56,6 +56,11 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button 
     background-color:#FFF;
 }
 
+/* ------ START CONTENT ------ */
+.startContent, .startContent > p{
+  margin-bottom:20px;
+}
+
 /* ------ TAB 1 INPUT ------ */
 .focus:focus, #direct_input:focus{
 	-o-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
@@ -157,6 +162,7 @@ input[readonly] {
 
 .glyphicon-warning-sign{
   color:#BC935A;
+  margin-right:30px;
 }
 
 .errors ul, .warnings ul{
@@ -165,6 +171,31 @@ input[readonly] {
 
 .errors ul li, .warnings ul li{
   list-style-type:none;
+}
+
+/* ------ ERRORS CONTAINER ------ */
+div.container.warnings > h2{
+  margin-top:0px;
+}
+
+div.container.warnings ul{
+  margin-left:45px;
+}
+
+.panel-body{
+  background-color:#F5F5F5;
+}
+
+.panel-footer{
+  background-color:#FFF;
+}
+
+.panel-footer ul li{
+  line-height:1.8em;
+}
+
+.errorTitle{
+  margin:0px;
 }
 
 /* ------ SELECT BOX + DRAW ARROWS (support for safari) ------ */
@@ -192,6 +223,10 @@ input[readonly] {
   border-right: 5px solid transparent;
   border-top: 5px solid black;
   display: block;
+}
+
+select::-ms-expand {
+    display: none;
 }
 
 select,
@@ -231,6 +266,16 @@ footer p{
   color:#009688;
   padding:20px 0px;
   font-size:2.0em;
+}
+
+/* ------ SLIDETOGGLE ------ */
+.errorExpandable{
+  margin:20px 0px 0px 35px;
+}
+
+.glyphicon-menu-down{
+  float:right;
+  margin-top:;
 }
 
 /* ------------------------------------ */

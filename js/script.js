@@ -1,5 +1,5 @@
 (function(){
-	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, list2;
+	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns;
 
 	function init(){
 		alert = $("<div>", {class:"alert alert-danger", role:"alert"});
@@ -21,11 +21,12 @@
         $(document).on({
             ajaxStart: function() { 
                 $(".spinner").css("display", "block");
+
             },
             ajaxStop: function() { 
                 $(".spinner").css("display", "none"); 
             }    
-        });
+        }); 
 	}
 
 	// ==========================================================================================
@@ -45,12 +46,12 @@
         clearFeedback();
 
         if($(".tab1Input").val() == "" || $(".formatSelectTab1").val() == ""){
-            alert.text("Please fill in all the required fields to validate by URL.");
+            alert.text("Please fill in all the fields to validate by URL.");
 
             validateField(".tab1Input");
             validateField(".formatSelectTab1");
 
-            $(".startContent").prepend(alert);
+            $("#tab1").prepend(alert);
 
         }else{
             url = $(".tab1Input").val();
@@ -62,26 +63,49 @@
     	$.get(url, function (data){
 	    	urlValue = data;
 	    	callback();
-            
 	    }).fail(function(){
-	    	alert.text("The URI you have entered is not valid."); 
-			$(".startContent").prepend(alert);
+	    	alert.text("The URI you have entered is not valid.");
+            $(".formatSelectTab1").css("border", "1px solid #CCC");
+            $(".tab1Input").css("border", "1px solid #D75452"); 
+			$("#tab1").prepend(alert);
 	    });
     }
 
     function validateUrl(){
     	if(urlValue == ""){
     		alert.text("The URI you have entered has nothing to validate."); 
-			$(".startContent").prepend(alert);
+			$("#tab1").prepend(alert);
     	}else{
     		selectParserTab1(urlValue);
     	}
     }
 
     function selectParserTab1(value){
-        catchError($(".formatSelectTab1").val() == "xml", rdf.parseRdfXml, value, ".formatSelectTab1", ".tab1Input");
-	    catchError($(".formatSelectTab1").val() == "jsonld", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input");
-	    catchError($(".formatSelectTab1").val() == "ttl", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input");
+        //for firefox only
+        if($(".formatSelectTab1").val() == "xml"){
+            var xhr = $.ajax({
+                type:"HEAD",
+                dataType:text,
+                url:$(".tab1Input").val(),
+                success:function(){
+                    if(xhr.getResponseHeader("Content-Type").toLowerCase().indexOf("xml") >= 0){
+                        rdf.parseRdfXml(value, function (graph) {
+                            rdf.serializeTurtle(graph, function(value){ 
+                                feedback = validate(value, afterValidate);
+                            });
+                        });
+                    } else {
+                        alert.text("The format you inserted is not the same as the selected format.");
+                        $(".formatSelectTab1").css("border", "1px solid #D75452");
+                        $(".tab1Input").css("border", "1px solid #CCC");
+                        $("#tab1").prepend(alert);
+                    }
+                }       
+            });
+        } else{
+            catchError($(".formatSelectTab1").val() == "jsonld", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+            catchError($(".formatSelectTab1").val() == "ttl", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+        }
     }
 
 	// ==========================================================================================
@@ -127,7 +151,7 @@
             uploadFileValue = "Please fill in all the required fields in order to validate by file upload.";
             uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
             uploadError.text(uploadFileValue);
-            $(".startContent").prepend(uploadError);
+            $("#tab2").prepend(uploadError);
         }else{
         	if($(".formatTab2").val() == fileExt){
         		var reader = new FileReader();
@@ -141,21 +165,21 @@
 	                uploadFileValue = "The file cannot be validated.";
 	                uploadError = $("<div>", {class:"alert alert-danger", role:"alert"});
 	                uploadError.text(uploadFileValue);
-	                $(".startContent").prepend(uploadError);
+	                $("#tab2").prepend(uploadError);
 	            }
         	}else{
-        		alert.text("Your chosen format is not the same as your inserted file.");
+        		alert.text("The format you inserted is not the same as the selected format.");
                 $(".formatTab2").css("border", "1px solid #D75452");
                 $(".feedbackInput").css("border", "1px solid #CCC");
-            	$(".startContent").prepend(alert);
+            	$("#tab2").prepend(alert);
         	}
         }
     }
 
     function selectParserTab2(fileExt){
-    	catchError(fileExt == "xml" && $(".formatTab2").val() == "xml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput");
-	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue, ".formatTab2", ".feedbackInput");
-	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "ttl", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput");
+        catchError(fileExt == "xml" && $(".formatTab2").val() == "xml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "ttl", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
     }
 
     // ==========================================================================================
@@ -176,7 +200,7 @@
 
         if($(".tab3Textarea").val() == "" || $(".formatTab3").val() == ""){
             alert.text("Please fill in the required fields for validating by manually input of the code.");
-            $(".startContent").prepend(alert);
+            $("#tab3").prepend(alert);
             
             validateField(".tab3Textarea");
             validateField(".formatTab3");
@@ -189,9 +213,24 @@
 
     //tab3
     function selectParserTab3(text){
-	    catchError($(".formatTab3").val() == "xml", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea");
-	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea");
-	    catchError($(".formatTab3").val() == "ttl", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea");
+        var sMyString = "<a id=\"a\"><b id=\"b\">hey!<\/b><\/a>";
+        var oParser = new DOMParser();
+        var oDOM = oParser.parseFromString($(".tab3Textarea").val(), "text/xml");
+        // print the name of the root element or error message
+        var checkFormat = oDOM.documentElement.nodeName == "parsererror" ? "error while parsing" : oDOM.documentElement.nodeName;
+
+        if(checkFormat == "error while parsing"){
+            if(checkFormat != "rdf:RDF"){
+                alert.text("The format you inserted is not the same as the selected format.");
+                $(".formatTab3").css("border", "1px solid #D75452");
+                $(".tab3Textarea").css("border", "1px solid #CCC");
+                $("#tab3").prepend(alert);
+            }
+        }
+        
+	    catchError($(".formatTab3").val() == "xml" && checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
+	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea", "#tab3");
+	    catchError($(".formatTab3").val() == "ttl", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
     }
 
     // ==========================================================================================
@@ -199,15 +238,15 @@
     // ==========================================================================================
 
     //general validate
-    function catchError(condition, rdfFunction, value, format, format2){
+    function catchError(condition, rdfFunction, value, format, format2, tab){
     	if(condition){
     		try{
-    			convertFormat(rdfFunction, value, format, format2);
+    			convertFormat(rdfFunction, value, format, format2, tab);
     		}catch(error){
     			alert.text("The format you inserted is not the same as the selected format.");
                 $(format).css("border", "1px solid #D75452");
                 $(format2).css("border", "1px solid #CCC");
-				$(".startContent").prepend(alert);
+				$(tab).prepend(alert);
     		}
             
         }
@@ -223,7 +262,7 @@
     }
 
     //general validate
-    function convertFormat(parseFunction, fileValue, format, format2){
+    function convertFormat(parseFunction, fileValue, format, format2, tab){
     	parseFunction(fileValue, function (graph) {
 	    	try{
                 $(".spinner").css("display", "block");
@@ -235,7 +274,7 @@
 	    		alert.text("The format you inserted is not the same as the selected format.");
                 $(format).css("border", "1px solid #D75452");
                 $(format2).css("border", "1px solid #CCC");
-				$(".startContent").prepend(alert);
+				$(tab).prepend(alert);
                 $(".spinner").css("display", "none");
 	    	}
     	});
@@ -283,57 +322,85 @@
     }
 
     //general - validate
-    function showErrorWarning(type, glyph, value, listContainer){
-        var listItem = $("<li>");
-        var rowStart = $("<div>", {class:"row start"});
-        var start = $("<div>", {class:"col-md-12"});
-        var row = $("<div>", {class:"row"});
-        var column = $("<div>", {class:"col-sm-12 col-lg-12 col-md-12"});
-        var tumbnail = $("<div>", {class:"tumbnail " + type});
-        var warning = $("<p>");
-        warning.append('<span class="glyphicon glyphicon-' + glyph + '-sign"></span>');
-        warning.append(value.error);
-
-        rowStart.append(start);
-        start.append(row);
-        row.append(column);
-        column.append(tumbnail);
-        tumbnail.append(warning);
-        listItem.append(rowStart);
-        listContainer.append(listItem);
+    function showFeedBackMessage(element, valid, rest){
+        elementContainer = $("<div>", {class:"container elementContainer"});
+        element.text("Your DCAT - feed is " + valid + "valid. You have " + rest);
+        elementContainer.append(element);
+        elementContainer.insertAfter($(".startContent"));
     }
 
     //general - validate
-    function showFeedBackMessage(element, valid, rest){
-    	element.text("Your DCAT - feed is " + valid + "valid. You have " + rest);
-        $(".startContent").prepend(element);
+    function showErrorWarning(value, list){
+        // var rowStart = $("<div>", {class:"row start"});
+        // var start = $("<div>", {class:"col-md-12"});
+        // var row = $("<div>", {class:"row"});
+        // var column = $("<div>", {class:"col-sm-12 col-lg-12 col-md-12"});
+        // var tumbnail = $("<div>", {class:"tumbnail " + type});
+        // var errorExpand = $("<p>", {class:"errorExpandable"});
+        // error.append('<span class="glyphicon glyphicon-' + glyph + '-sign"></span>');
+        // errorExpand.append(value2);
+        // errorExpand.append(value2);
+
+        // rowStart.append(start);
+        // start.append(row);
+        // row.append(column);
+        // column.append(tumbnail);
+        // tumbnail.append(error);
+        // tumbnail.append(errorExpand);
+        // listItem.append(rowStart);
+        // listContainer.append(listItem);
     }
 
     //general validate
     function showFeedback(){
         var warningsContainer = $("<div>", {class:"container warnings"});
         var errorsContainer = $("<div>", {class:"container errors"});
-        var fErrors = feedback['errors'].length;
-        var fWarnings = feedback['warnings'].length;
+        var fErrors = Object.keys(feedback["errors"]).length;
+        var fWarnings = Object.keys(feedback["warnings"]).length;
 
         if(fErrors == 0 && fWarnings == 0){
-        	showFeedBackMessage(success, "", "no errors and no warnings");
+        	showFeedBackMessage(success, "", "no errors and no warnings.");
         }else if((fErrors != 0 && fWarnings != 0) || (fErrors != 0 && fWarnings == 0)){
 			showFeedBackMessage(alert, "not ", fErrors + " error(s) and " + fWarnings + " warning(s). You can find your error(s) or warning(s) below the page.");
 		}else if(fErrors == 0 && fWarnings != 0 ){
 			showFeedBackMessage(warning, "", "no errors, but " + fWarnings + " warning(s). You can see your warning(s) below the page.");
         }
 
+        var i = 0;
         if(fWarnings != 0){
             var header2 = $("<h2>");
             header2.text("Warnings");
-            list2 = $("<ul>");
             warningsContainer.append(header2);
-            warningsContainer.append(list2);
-            $.each(feedback["warnings"], function(key, value){
-                showErrorWarning("warning", "warning", value, list2);
-            });
-            warningsContainer.insertAfter($(".startContent"));
+            for(warning in feedback["warnings"]){
+                i++;
+                var panel = $("<div>", {class:"panel panel-default"});
+                var panelBody = $("<div>", {class:"panel-body down" + i});
+                var panelFooter = $("<div>", {class:"panel-footer panel-footer-down" + i});
+                panel.append(panelBody);
+                panel.append(panelFooter);
+                warningsContainer.append(panel);
+                var list2 = $("<ul>", {class:"list"});
+                panelFooter.append(list2);
+                var error = $ ("<p>", {class:"errorTitle"});
+                var expandError = $('<span></span>', {class:"glyphicon glyphicon-menu-down"});
+                error.append('<span class="glyphicon glyphicon-warning-sign"></span>');
+                error.append("<strong>Resource: </strong>" + warning);
+                error.append(expandError);
+                panelBody.append(error);
+
+                for(warning2 in feedback["warnings"][warning]){
+                    var listItem = $("<li>");
+                    listItem.append(feedback["warnings"][warning][warning2].error);
+                    list2.append(listItem);
+                }
+
+            }
+            warningsContainer.insertAfter(elementContainer);
+
+            expandBtns = document.querySelectorAll(".panel-body");
+            if(expandBtns){
+                dropDown(expandBtns);
+            } 
         }
 
         if(fErrors != 0){         
@@ -342,15 +409,26 @@
             list = $("<ul>");
             errorsContainer.append(header);
             errorsContainer.append(list);
-            $.each(feedback["errors"], function(key, value){
-                showErrorWarning("error", "remove", value, list);                
-            });
+            for(error in feedback["errors"]){
+                for(error2 in feedback["errors"][error]){
+                    showErrorWarning("error", "remove", error, feedback["errors"][error][error2].error, list);
+                }
+            }
             if(feedback['warnings'].length != 0){
                 errorsContainer.insertAfter(warningsContainer);
             }else{
-                errorsContainer.insertAfter($(".startContent"));
+                errorsContainer.insertAfter(elementContainer);
             }
         }
+    }
+
+    function dropDown(array){
+        [].forEach.call(array, function(btn){
+            btn.addEventListener("click", function(event){
+                var panelFootName = event.currentTarget.getAttribute('class').split(' ')[1];
+                $(".panel-footer-" + panelFootName).slideToggle("fast");
+            });
+        });
     }
 
      init();
