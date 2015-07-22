@@ -16,20 +16,24 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-
+  
+    <!-- NAVIGATION HEADER -->
     <div class="navbar navbar-default navbar-static-top heading" role="navigation">
       <div class="container">
         <div class="navbar-header">
+          <!-- RESPONSIVE MENU BUTTON -->
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
+          <!-- HEADING TITLE -->
           <a class="navbar-brand" href="index.html">
             <span class="navbar-name">DCAT - validator</span>
           </a>
         </div>
+        <!-- NAVIGATION -->
         <center> 
           <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
             <ul class="nav navbar-nav navbar-right">
@@ -40,95 +44,112 @@
       </div>
     </div>
 
+    <!-- CONTENT -->
     <div class="container startContent">
       <div class="row">
         <div class="col-md-12">
           <div class="tabbable">
+            <!-- 3 DIFFERENT TABS -->
             <ul class="nav nav-tabs">
               <li class="active"><a href="#tab1" data-toggle="tab">By URI</a></li>
               <li><a href="#tab2" data-toggle="tab">By upload</a></li>
               <li><a href="#tab3" data-toggle="tab">By direct input</a></li>
             </ul>
             <div class="tab-content page-content">
+              <!-- TAB 1 -->
               <div class="tab-pane active" id="tab1">
-                <form class="form-horizontal formTab1" method="post" action="">
+                <form class="form-horizontal formTab1" method="post" action="index.html">
                   <div class="form-group col-sm-12 formatTab1">
-                    <label class="tab1FormatLabel" for="format">Select the format:</label>
+                    <label class="tab1FormatLabel" for="formatTab1">Select the format:</label>
                     <div class="col-sm-12">
-                      <select name="formatSelectTab1" class="form-control focus formatSelectTab1">
+                      <!-- SELECT FORMAT TAB 1 -->
+                      <select name="formatSelectTab1" id="formatTab1" class="form-control focus formatSelectTab1">
                         <option value="ttl">Turtle</option>
                         <option value="xml">RDF/XML</option>
                         <option value="jsonld">JSON-LD</option>
                       </select>
+                      <!-- ARROWS SUPPORT SAFARI & IE -->
                       <div class="dblarrow"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
-                    <label class="tab1FormatLabel" for="format">URI:</label>
+                    <label class="tab1FormatLabel" for="uriTab1">URI:</label>
                     <div class="col-sm-12">
-                       <input type="text" class="focus form-control tab1Input" name="uri" placeholder="http://demo.thedatatank.com/api/dcat" aria-describedby="basic-addon1">
+                        <!-- URI INPUT TAB 1 -->
+                        <input type="text" id="uriTab1" class="focus form-control tab1Input" name="uri" placeholder="http://demo.thedatatank.com/api/dcat" aria-describedby="basic-addon1">
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="col-sm-12">
-                       <input type="submit" name="actionTab1" value="Validate" class="btn btn-primary validateBtn" />
+                        <!-- BUTTON TAB 1 -->
+                        <input type="submit" name="actionTab1" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
               </div>
+              <!-- TAB 2 -->
               <div class="tab-pane" id="tab2">
-                <form class="form-horizontal" method="post" action="">
+                <form class="form-horizontal" method="post" action="index.html">
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">Select the format:</label>
+                    <label class="tab2FormatLabel" for="formatTab2">Select the format:</label>
                     <div class="col-sm-12">
-                      <select name="formatTab2" class="form-control focus formatTab2">
+                      <!-- SELECT FORMAT TAB 2 -->
+                      <select name="formatTab2" id="formatTab2" class="form-control focus formatTab2">
                         <option value="ttl">Turtle</option>
                         <option value="xml">RDF/XML</option>
                         <option value="jsonld">JSON-LD</option>
                       </select>
+                      <!-- ARROWS SUPPORT SAFARI & IE -->
                       <div class="dblarrow"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group col-sm-12">
-                    <label class="tab2FormatLabel" for="format">Upload:</label>
-                      <div class="input-group inputTab2">
-                        <span class="input-group-btn">
-                            <span class="btn btn-primary btn-file">
-                                Browse&hellip;<input class="inputFile" type="file" multiple />
-                            </span>
-                        </span>
-                        <input type="text" class="form-control feedbackInput" placeholder="Select a file" readonly>
+                    <label class="tab2FormatLabel" for="uploadTab2">Upload:</label>
+                    <!-- BROWSE BUTTON AND INPUT -->
+                    <div class="input-group inputTab2">
+                      <span class="input-group-btn">
+                          <span class="btn btn-primary btn-file">
+                              Browse&hellip;<input class="inputFile" type="file" multiple />
+                          </span>
+                      </span>
+                      <input type="text" id="uploadTab2" class="form-control feedbackInput" placeholder="Select a file" readonly>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="col-sm-12">
-                       <input type="submit" name="actionTab2" value="Validate" class="btn btn-primary validateBtn" />
+                        <!-- BUTTON TAB 2 -->
+                        <input type="submit" name="actionTab2" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
               </div>
+              <!-- TAB 3 -->
               <div class="tab-pane" id="tab3">
-                <form method="post" action="">
+                <form method="post" action="index.html">
                   <div class="form-group formatBox">
-                    <label class="tab3FormatLabel" for="format">Select the format:</label>
+                    <label class="tab3FormatLabel" for="formatTab3">Select the format:</label>
                     <div class="col-sm-12">
-                      <select name="formatTab3" class="form-control focus formatTab3">
+                      <!-- SELECT FORMAT TAB 3 -->
+                      <select name="formatTab3" id="formatTab3" class="form-control focus formatTab3">
                         <option value="ttl">Turtle</option>
                         <option value="xml">RDF/XML</option>
                         <option value="jsonld">JSON-LD</option>
                       </select>
+                      <!-- ARROWS SUPPORT SAFARI & IE -->
                       <div class="dblarrow2"><b></b><i></i></div>
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="directInputLabel" for="direct_input">Direct input:</label>
                     <div class="col-sm-12">
+                      <!-- TEXTAREA INPUT TAB 2 -->
                       <textarea class="form-control tab3Textarea" placeholder="Enter your markup here" rows="20" id="direct_input"></textarea>
                     </div>
                   </div>
                   <div class="form-group col-sm-12 formatTab1">
                     <div class="">
-                       <input type="submit" name="actionTab3" value="Validate" class="btn btn-primary validateBtn" />
+                        <!-- BUTTON TAB 3 -->
+                        <input type="submit" name="actionTab3" value="Validate" class="btn btn-primary validateBtn" />
                     </div>
                   </div>
                 </form>
@@ -139,10 +160,12 @@
       </div>
     </div>
 
+    <!-- SPINNER -->
     <div class="container spinner" id="spinner">
       <i class="fa fa-refresh fa-spin"></i>
     </div>
 
+    <!-- FOOTER -->
     <div class="container footerCont">
       <footer>
         <p>'DCAT - validator' &copy; 2015, Open Knowledge Belgium. DCAT - validator is a part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a>This project is funded by the <a href="http://www.flanders.be/en">Flemish government</a>.</p>

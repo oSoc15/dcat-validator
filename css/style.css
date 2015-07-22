@@ -1,5 +1,5 @@
 /* ------------------------------------ */
-/* --------- SELF WRITTEN CSS --------- */
+/* ---------- CSS - STYLE.CSS --------- */
 /* ------------------------------------ */
 
 /* --------- HEADING --------- */
@@ -22,7 +22,7 @@ a:hover{
 	color:#fff;
 }
 
-/* --- PAGE CONTENT TAB 1 --- */
+/* ----- PAGE CONTENT  ----- */
 .page-content{
 	padding:40px 30px 30px 20px;
 	border-left:1px solid #ddd;
@@ -32,7 +32,11 @@ a:hover{
 	overflow:auto;
 }
 
-/* --- PAGE CONTENT TABS --- */
+.startContent, .startContent > p{
+  margin-bottom:40px;
+}
+
+/* ------ BUTTONS ------ */
 .btn-primary{
 	background-color:#009688;
 	border:none;
@@ -56,13 +60,8 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button 
     background-color:#FFF;
 }
 
-/* ------ START CONTENT ------ */
-.startContent, .startContent > p{
-  margin-bottom:40px;
-}
-
-/* ------ TAB 1 INPUT ------ */
-.focus:focus, #direct_input:focus{
+/* ------ FOCUS INPUT FIELDS ------ */
+.focus:focus, #direct_input:focus, #uploadTab2:focus{
 	-o-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
 	-ms-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
 	-moz-box-shadow:0px 0px 8px rgba(20, 149, 136, 0.3);
@@ -71,6 +70,7 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button 
 	border:1px solid rgba(20, 149, 136, 0.5);
 }
 
+/* ------ NO PADDING RIGHT ------ */
 #tab1 > form > div.form-group.col-sm-12,
 #tab2 > form > div.form-group.col-sm-12,
 #tab1 > form > div.form-group.col-sm-12.formatTab1 > div,
@@ -87,17 +87,21 @@ body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button 
 	float:right;
 }
 
-/* ------ TAB 2 ------ */
-
+/* ------ FORMAT SELECT BOX ------ */
 #tab1 .tab1FormatLabel, #tab2 .tab2FormatLabel, #tab3 .tab3FormatLabel, .directInputLabel, #tab3 .tab2FormatLabel{
     margin-left:16px;
 }
 
+/* ------ TAB 2 INPUT ------ */
 #tab2 .formatTab2{
     padding-left:0;
 }
 
-/* ------ TAB 3 ------ */
+#tab2 select.formatTab2{
+  padding-left:12px;
+}
+
+/* ------ TAB 3 INPUT ------ */
 #tab3 .btn-primary{
 	margin-top:20px;
 }
@@ -161,16 +165,17 @@ input[readonly] {
   margin-right:30px;
 }
 
-.glyphicon-remove-sign{
-  color:#A74444;
-}
-
 .errors ul, .warnings ul{
   padding-left:0px;
 }
 
 .errors ul li, .warnings ul li{
   list-style-type:none;
+}
+
+/* ------ ERRORS - GLYPH ------ */
+.glyphicon-remove-sign{
+  color:#A74444;
 }
 
 /* ------ ERRORS CONTAINER ------ */
@@ -198,7 +203,7 @@ div.container.warnings ul, div.container.errors ul{
   margin:0px;
 }
 
-/* ------ SELECT BOX + DRAW ARROWS (support for safari) ------ */
+/* ------ SELECT BOX + DRAW ARROWS (support for safari and IE) ------ */
 .dblarrow, .dblarrow2{
   display: inline-block;
   position:absolute;
@@ -240,10 +245,6 @@ select{
 
 .dblarrow2{
   right:25px;
-}
-
-#tab2 select.formatTab2{
-  padding-left:12px;
 }
 
 /* ------ FOOTER ------ */
@@ -293,11 +294,12 @@ footer p{
   transform: rotate(180deg);
 }
 
-/* ------------------------------------ */
-/* ----------- MEDIA QUERIES ---------- */
-/* ------------------------------------ */
+/* -------------------------------------------------------- */
+/* ----------- MEDIA QUERIES (RESPONSIVE DESIGN) ---------- */
+/* -------------------------------------------------------- */
 @media screen and (max-width: 768px) {
 
+  /* ------ TABS PADDING - RIGHT ------ */
   #tab1 > form > div.form-group.col-sm-12,
   #tab2 > form > div.form-group.col-sm-12,
   #tab1 > form > div.form-group.col-sm-12.formatTab1 > div,
@@ -305,10 +307,12 @@ footer p{
       padding-right:15px;
   }
 
+  /* ------ TAB 3 INPUT ------ */
   .formatBox{
       margin-bottom:16px;
   }
 
+  /* ------ TABS ARROWS (support for safari and IE) ------ */
   .dblarrow{
     right:25px;
   }
