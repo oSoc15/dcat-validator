@@ -6,13 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>DCAT - validator</title>
-    <!-- Bootstrap -->
-    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- Font - awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <!-- Self written css (not bootstrap) -->
+    <!-- CSS - STYLE.CSS -->
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
@@ -172,14 +170,22 @@
       </footer>
     </div>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- jQuery -->
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- jQuery local fallback -->
+    <script>window.jQuery || document.write('<script src="node_modules/jquery/dist/jquery.min.js"><\/script>')</script>
+    <!-- Bootstrap JS CDN -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS local fallback -->
+    <script>if(typeof($.fn.modal) === 'undefined') {document.write('<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"><\/script>')}</script>
+    <!-- Bootstrap CSS local fallback -->
+    <script>
+      $(document).ready(function() {
+      var bodyColor = $('body').css('color');
+      if(bodyColor != 'rgb(51, 51, 51)') {
+      $("head").prepend('<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">');}});
+    </script>
+
     <!-- RDF - Ext to convert RDF formats to turtle -->
     <script src="node_modules/rdf-ext/dist/rdf-ext.js"></script>
     <!-- N3 node.js library -->
