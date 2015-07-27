@@ -11,7 +11,7 @@
 (function(){
     // global variables
 	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns, panelFooters;
-    var urlValue, urlFinal, number = 0;
+    var urlValue, urlFinal, number = 0, clicked = true;
 
     // init function that executes all functions and 
     // gets called at the bottom of the javascript file once all the functions are known
@@ -48,9 +48,33 @@
                 $(".spinner").css("display", "none"); 
             }    
         });
+
+        // check if there is a hash in the URI, if there is then execute function getUrlVariables
+        // argument: he URI beginning from the hash #
+        var hash = location.hash;
+        if(location.hash != ""){
+            getUrlVariables(hash);
+        }
 	}
 
+    // Function that gets all variables from the URL after the hashtag
+    // This way we can get the format and the url from the URI
+    function getUrlVariables(hash){
+        // split the string up where there are ampersands
+        var varArray = hash.split('&');
+        var valueArray = [];
+        for(var i = 0; i < varArray.length; i++){
+            // split the strings up where there are 'equal to' signs
+            valueArray[i] = varArray[i].split('=');
+        }
 
+        $(".formatSelectTab1").val(valueArray[0][1]);
+        var dec = decodeURIComponent(valueArray[1][1]);
+
+        $(".tab1Input").val(dec);
+        clicked = false;
+        validateUrlFields();
+    }
 
 	// ==========================================================================================
     // ========================================= TAB 1 ==========================================
@@ -65,7 +89,10 @@
     // function that validates all the different fields in tab1
     // when all the fields are valid it calls the function getData
     function validateUrlFields(event){
-    	event.preventDefault();
+        if(clicked){
+            event.preventDefault();
+        }
+        clicked = true;
 
         // clear the red borders from tab2 and tab3
         clearBorders("", "tab2", "tab3");
@@ -150,7 +177,8 @@
         // if the selected format is not xml, check if another format is selected and execute the function catchError
         } else{
             catchError($(".formatSelectTab1").val() == "jsonld", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input", "#tab1");
-            catchError($(".formatSelectTab1").val() == "ttl", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+            catchError($(".formatSelectTab1").val() == "turtle", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+            //catchError($(".formatSelectTab1").val() == "rdfa", rdf.parseRdfa, value, ".formatSelectTab1", ".tab1Input", "#tab1");
         }
     }
 
@@ -241,7 +269,8 @@
     function selectParserTab2(fileExt){
         catchError(fileExt == "xml" && $(".formatTab2").val() == "xml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
 	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
-	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "ttl", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "turtle", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+        //catchError(fileExt == "rdfa" && $(".formatTab2").val() == "rdfa", rdf.parseRdfa, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
     }
 
     // ==========================================================================================
@@ -302,7 +331,8 @@
         // the catchError function is called which selects the right parser and then serializes to Turtle
 	    catchError($(".formatTab3").val() == "xml" && checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea", "#tab3");
-	    catchError($(".formatTab3").val() == "ttl", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
+	    catchError($(".formatTab3").val() == "turtle", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
+        //catchError($(".formatTab3").val() == "rdfa", rdf.parseRdfa, text, ".formatTab3", ".tab3Textarea", "#tab3");
     }
 
     // ==========================================================================================
@@ -339,8 +369,7 @@
                 $(format).css("border", "1px solid #D75452");
                 $(format2).css("border", "1px solid #CCC");
 				$(tab).prepend(alert);
-    		}
-            
+    		}   
         }
     }
 
@@ -361,6 +390,7 @@
                     $(".spinner").css("display", "block");
                     // This variable contains the returned array which has all the errors and warnings in it
                     // The filevalue contains the feed itself as Turtle and the afterValidate function is a callback
+
 	                feedback = validate(fileValue, afterValidate);
 	            });  
 	    	}catch(error){
@@ -507,7 +537,6 @@
             var header = $("<h2>");
             header.text("Errors");
             errorsContainer.append(header);
-            console.log(feedback);
 
             showErrorWarning("errors", errorsContainer, "remove");
 
@@ -533,7 +562,6 @@
     // Function that makes it possible to expand the errors and warnings to see there properties
     function dropDown(array){
         [].forEach.call(array, function(btn){
-            console.log(btn);
             btn.addEventListener("click", function(event){
                 $(btn).parent('.panel').toggleClass('down');
                 var panelFootName = event.currentTarget.getAttribute('class').split(' ')[1];
