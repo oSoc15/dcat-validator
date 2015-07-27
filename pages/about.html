@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>DCAT - validator</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <!-- Font - awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- CSS - STYLE.CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+  </head>
+  <body>
+  
+    <!-- NAVIGATION HEADER -->
+    <div class="navbar navbar-default navbar-static-top heading" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <!-- RESPONSIVE MENU BUTTON -->
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!-- HEADING TITLE -->
+          <a class="navbar-brand" href="../index.html">
+            <span class="navbar-name">DCAT - validator</span>
+          </a>
+        </div>
+        <!-- NAVIGATION -->
+        <center> 
+          <div class="navbar-collapse collapse" id="navbar-main" area-expanded="false" style="height:1px;">
+            <ul class="nav navbar-nav navbar-right">
+              <li class="engLan"><a href="about.html">About</a></li>
+            </ul>
+          </div>
+        </center>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="container about">
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="articleDCAT">
+            <h2>What is DCAT?</h2>
+            <p>DCAT, which is short for Data Catalog Vocabulary, is a set of terms to describe datasets. Using DCAT all data can be accessed in a uniform way.</p>
+            <blockquote cite="http://www.w3.org/TR/vocab-dcat/">
+              <p>DCAT is an RDF vocabulary designed to facilitate interoperability between data catalogs published on the Web. This document defines the schema and provides examples for its use.</p>
+            </blockquote>
+            <p>This is very abstract, so here is an example to clarify things. A researcher needs information about beetles. Let's say there are three datasets: the beetles in Belgium, the beetles in the Netherlands and cat pictures. The person goes on the web to look for 'beetles' and everything that is related to it. He has to look at the data to see if it is important to his research, but if the researcher finds the data about cats, he won't know if it is irrelevant until he looks at it.
+            <hr>
+            <p>By using DCAT, a computer will be able to do this. The data can be found by a computer if datasets on the internet are standardised. The only thing the researcher has to do is ask the computer fo find all datasets that contain information about beetles.</p>
+          </div>
+          <div class="articleDCAT">
+            <h2>About the validator</h2>
+            <p>This project is part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> It is funded by the <a href="http://www.flanders.be/en">Flemish government</a> and is part of a bigger project that consits of three subprojects of which this validator is one. The intention of this project is to make a validator for DCAT feeds. It shows errors or warnings of classes when respectively mandatory or required properties are missing. The validation can easily be done by manually inserting the feed, uploading a file or inserting a URI.</p>
+            <p>The user can insert different formats. These formats are RDF:XML, JSON-LD and Turtle. The inserted format will be parsed and serialized to 'Turtle' so that it can be validated. Once the feed is validated the user will receive feedback whether his feed is valid or has errors or warnings. These errors and warnings can be expanded to find more information about its missing or wrong properties.</p>
+            <hr>
+            <p>Many organistions use datasets and try to standardise these by using DCAT. But it is very hard to find the right syntax because there is not much documentation about it. For example: if there is a missing class or property. The computer will have it very difficult to link different datasets together because of the missing attribute. It's because of this we want to make the DCAT validator so that users can see if there feed is valid or not and what elements, classes, attributes or properties have to be adjusted in order for the different datasets to be linked together by computers.</p>
+          </div>
+        </div>
+        <div class="col-sm-3 col-sm-offset-1">
+          <div class="sidebar-module">
+            <h3>Other links</h3>
+            <ul>
+              <li><a href="https://github.com/oSoc15/dcat-validator">Github</a></li>
+              <li><a href="https://github.com/oSoc15/dcat-validator.js">Validator library</a></li>
+              <li><a href="http://open.summerofcode.be/2015/07/10/dcat/">DCAT blog</a></li>
+              <li><a href="http://2015.summerofcode.be/">oSoc15</a></li>
+              <li><a href="http://www.openknowledge.be/">Open knowledge Belgium</a></li>
+              <li><a href="http://www.flanders.be/en">Flemish Government</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="container footerCont">
+      <footer>
+        <p>'DCAT - validator' &copy; 2015, Open Knowledge Belgium. DCAT - validator is a part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> This project is funded by the <a href="http://www.flanders.be/en">Flemish government</a>.</p>
+      </footer>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <!-- jQuery local fallback -->
+    <script>window.jQuery || document.write('<script src="../node_modules/jquery/dist/jquery.min.js"><\/script>')</script>
+    <!-- Bootstrap JS CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS local fallback -->
+    <script>if(typeof($.fn.modal) === 'undefined') {document.write('<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"><\/script>')}</script>
+    <!-- Bootstrap CSS local fallback -->
+    <script>
+      $(document).ready(function() {
+      var bodyColor = $('body').css('color');
+      if(bodyColor != 'rgb(51, 51, 51)') {
+      $("head").prepend('<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">');}});
+    </script>
+
+    <!-- RDF - Ext to convert RDF formats to turtle -->
+    <script src="../node_modules/rdf-ext/dist/rdf-ext.js"></script>
+    <!-- N3 node.js library -->
+    <script src="../js/dcat-validator.bundle.js"></script>
+    <!-- Self written javascript -->
+    <script src="../js/script.js"></script>
+  </body>
+</html>

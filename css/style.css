@@ -294,6 +294,23 @@ footer p{
   transform: rotate(180deg);
 }
 
+/* --------------------------------- */
+/* ----------- ABOUT PAGE ---------- */
+/* --------------------------------- */
+
+.about p{
+  font-size:16px;
+}
+
+/* ------ SIDEBAR ------ */
+.sidebar-module ul{
+  padding-left:0px;
+}
+
+.sidebar-module ul li{
+  list-style-type:none;
+}
+
 /* -------------------------------------------------------- */
 /* ----------- MEDIA QUERIES (RESPONSIVE DESIGN) ---------- */
 /* -------------------------------------------------------- */
