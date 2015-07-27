@@ -57,7 +57,7 @@
         }
 	}
 
-    // Function that gets all variables from the URL after the hashtag
+    // function that gets all variables from the URL after the hashtag
     // This way we can get the format and the url from the URI
     function getUrlVariables(hash){
         // split the string up where there are ampersands
@@ -148,38 +148,60 @@
 
     // This function selects a parser for the selected format
     function selectParserTab1(value){
-        // This if method checks if the content-type is XML. This method is only here because firefox had trouble parsing
-        // the xml and serializing to turtle
-        if($(".formatSelectTab1").val() == "xml"){
-            // ajax call
+        if($(".formatSelectTab1").val() == "rdfxml"){
+            ajaxCallTab1("xml", "rdfxml", rdf.parseRdfXml, value);
+        }else if($(".formatSelectTab1").val() == "jsonld"){
+            ajaxCallTab1("ld+json", "jsonld", rdf.parseJsonLd, value);
+        }else if($(".formatSelectTab1").val() == "turtle"){
+            ajaxCallTab1("turtle", "turtle", rdf.parseTurtle, value);
+        // if the parser is automatic then it executes a parser depending on the returned content-type from the ajax request
+        }else if($(".formatSelectTab1").val() == "auto"){
             var xhr = $.ajax({
                 type:"HEAD",
                 dataType:text,
                 url:$(".tab1Input").val(),
-                // if the ajax call is successfull
+                headers: {          
+                    Accept: "text/turtle, application/ld+json, application/rdf+xml, */*; q=1.0"
+                },
                 success:function(){
-                    // if the content type is XML, serialize the parsed data to Turtle format, else show an error that
-                    // the format is not correct
-                    if(xhr.getResponseHeader("Content-Type").toLowerCase().indexOf("xml") >= 0){
-                        rdf.parseRdfXml(value, function (graph) {
-                            rdf.serializeTurtle(graph, function(value){ 
-                                feedback = validate(value, afterValidate);
-                            });
-                        });
-                    } else {
-                        alert.text("The format you inserted is not the same as the selected format.");
-                        $(".formatSelectTab1").css("border", "1px solid #D75452");
-                        $(".tab1Input").css("border", "1px solid #CCC");
+                    var contentType = xhr.getResponseHeader("Content-Type");
+                    if(contentType.toLowerCase().indexOf("turtle") >= 0){
+                        catchError($(".formatSelectTab1").val() == "auto", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+                    }else if(contentType.toLowerCase().indexOf("xml") >= 0){
+                        catchError($(".formatSelectTab1").val() == "auto", rdf.parseRdfXml, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+                    }else if(contentType.toLowerCase().indexOf("ld+json") >= 0){
+                        catchError($(".formatSelectTab1").val() == "auto", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+                    }else{
+                        alert.text("The URI you inserted does not contain one of the formats we support. Please insert a XML, JSON-LD or Turtle format.");
+                        $(".tab1Input").css("border", "1px solid #D75452");
+                        $(".formatSelectTab1").css("border", "1px solid #CCC");
                         $("#tab1").prepend(alert);
                     }
-                }       
+                }
             });
-        // if the selected format is not xml, check if another format is selected and execute the function catchError
-        } else{
-            catchError($(".formatSelectTab1").val() == "jsonld", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input", "#tab1");
-            catchError($(".formatSelectTab1").val() == "turtle", rdf.parseTurtle, value, ".formatSelectTab1", ".tab1Input", "#tab1");
-            //catchError($(".formatSelectTab1").val() == "rdfa", rdf.parseRdfa, value, ".formatSelectTab1", ".tab1Input", "#tab1");
         }
+    }
+
+    function ajaxCallTab1(format, selectFormat, parseFunction, value){
+        // ajax call
+        var xhr = $.ajax({
+            type:"HEAD",
+            dataType:text,
+            url:$(".tab1Input").val(),
+            // if the ajax call is successfull
+            success:function(){
+                // if the content type is XML, serialize the parsed data to Turtle format, else show an error that
+                // the format is not correct
+                if(xhr.getResponseHeader("Content-Type").toLowerCase().indexOf(format) >= 0){
+                    catchError($(".formatSelectTab1").val() == selectFormat, parseFunction, value, ".formatSelectTab1", ".tab1Input", "#tab1");
+                } else {
+                    alert.text("The format you inserted is not the same as the selected format.");
+                    $(".formatSelectTab1").css("border", "1px solid #D75452");
+                    $(".tab1Input").css("border", "1px solid #CCC");
+                    $("#tab1").prepend(alert);
+                }
+            }       
+        });
     }
 
 	// ==========================================================================================
@@ -267,10 +289,9 @@
 
     // This function executes the catchError function which determines which parser is executed to serialize everything to turtle
     function selectParserTab2(fileExt){
-        catchError(fileExt == "xml" && $(".formatTab2").val() == "xml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+        catchError(fileExt == "xml" && $(".formatTab2").val() == "rdfxml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
 	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
 	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "turtle", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
-        //catchError(fileExt == "rdfa" && $(".formatTab2").val() == "rdfa", rdf.parseRdfa, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
     }
 
     // ==========================================================================================
@@ -329,10 +350,9 @@
         //////////////////////////////////////////////////////////
         
         // the catchError function is called which selects the right parser and then serializes to Turtle
-	    catchError($(".formatTab3").val() == "xml" && checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
+	    catchError($(".formatTab3").val() == "rdfxml" && checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "turtle", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
-        //catchError($(".formatTab3").val() == "rdfa", rdf.parseRdfa, text, ".formatTab3", ".tab3Textarea", "#tab3");
     }
 
     // ==========================================================================================
