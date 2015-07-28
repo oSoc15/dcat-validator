@@ -12,6 +12,9 @@
     // global variables
 	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns, panelFooters;
     var urlValue, urlFinal, number = 0, clicked = true;
+    var xmlPatt = /^\s*\<\?xml/i;
+    var jsonldPatt = /^\s*\{[\s\S]*.*[\s\S]*\}\s*$/m;
+    var turtlePatt = /^\s*\@prefix/i;
 
     // init function that executes all functions and 
     // gets called at the bottom of the javascript file once all the functions are known
@@ -128,10 +131,7 @@
 	    	callback();
         // if the function can't get the source code from the URI, it will return an error that the URI is not valid
 	    }).fail(function(){
-	    	alert.text("The URI you have entered is not valid.");
-            $(".formatSelectTab1").css("border", "1px solid #CCC");
-            $(".tab1Input").css("border", "1px solid #D75452"); 
-			$("#tab1").prepend(alert);
+            showAlert("The URI you have entered is not valid.", ".tab1Input", ".formatSelectTab1", "#tab1");
 	    });
     }
 
@@ -172,10 +172,7 @@
                     }else if(contentType.toLowerCase().indexOf("ld+json") >= 0){
                         catchError($(".formatSelectTab1").val() == "auto", rdf.parseJsonLd, value, ".formatSelectTab1", ".tab1Input", "#tab1");
                     }else{
-                        alert.text("The URI you inserted does not contain one of the formats we support. Please insert a XML, JSON-LD or Turtle format.");
-                        $(".tab1Input").css("border", "1px solid #D75452");
-                        $(".formatSelectTab1").css("border", "1px solid #CCC");
-                        $("#tab1").prepend(alert);
+                        showAlert("The URI you inserted does not contain one of the formats we support. Please insert a XML, JSON-LD or Turtle format.", ".tab1Input", ".formatSelectTab1", "#tab1");
                     }
                 }
             });
@@ -201,10 +198,7 @@
                 if(xhr.getResponseHeader("Content-Type").toLowerCase().indexOf(format) >= 0){
                     catchError($(".formatSelectTab1").val() == selectFormat, parseFunction, value, ".formatSelectTab1", ".tab1Input", "#tab1");
                 } else {
-                    alert.text("The format you inserted is not the same as the selected format.");
-                    $(".formatSelectTab1").css("border", "1px solid #D75452");
-                    $(".tab1Input").css("border", "1px solid #CCC");
-                    $("#tab1").prepend(alert);
+                    showAlert("The format you inserted is not the same as the selected format.", ".formatSelectTab1", ".tab1Input", "#tab1");
                 }
             }       
         });
@@ -225,7 +219,7 @@
 
         // if the document is loaded and a file is selected show the user which file he selected
         $(document).ready( function() {
-            $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+            $('.btn-file :file').on('fileselect', function(event, numFiles, label){
                 var feedback = $(".feedbackInput");
                 feedback.val(label);
             });
@@ -290,10 +284,7 @@
 	            }
             // else if the file format and the extension are not the same show an error message
         	}else{
-        		alert.text("The format you inserted is not the same as the selected format.");
-                $(".formatTab2").css("border", "1px solid #D75452");
-                $(".feedbackInput").css("border", "1px solid #CCC");
-            	$("#tab2").prepend(alert);
+                showAlert("The format you inserted is not the same as the selected format.", ".formatTab2", ".feedbackInput", "#tab2");
         	}
         }
     }
@@ -352,10 +343,7 @@
         // if the checkFormat contains an error and it's not equal to rdf:RDF, an error is shown
         if(checkFormat == "error while parsing"){
             if(checkFormat != "rdf:RDF"){
-                alert.text("The format you inserted is not the same as the selected format.");
-                $(".formatTab3").css("border", "1px solid #D75452");
-                $(".tab3Textarea").css("border", "1px solid #CCC");
-                $("#tab3").prepend(alert);
+                showAlert("The format you inserted is not the same as the selected format.", ".formatTab3", ".tab3Textarea", "#tab3");
             }
         }
         //////////////////////////////////////////////////////////
@@ -391,15 +379,14 @@
     // -- format2: this is the other field from the chosen form
     // -- tab: this is the tab the user choses to use
     function catchError(condition, rdfFunction, value, format, format2, tab){
-        console.log(value);
     	if(condition){
             // try catch method to intercept an error
     		try{
     			convertFormat(rdfFunction, value, format, format2, tab);
     		}catch(error){
-                if($(format).val() == "rdfxml" && value.substring(0,5) == "<?xml"){
+                if($(format).val() == "rdfxml" && xmlPatt.test(value)){
                     showAlert("The format you inserted is correct, but your RDF:XML syntax is wrong.", format, format2, tab);
-                }else if($(format).val() == "jsonld" && value.substring(0,1) == "{" && value.slice(-1) == "}"){
+                }else if($(format).val() == "jsonld" && jsonldPatt.test(value)){
                     showAlert("The format you inserted is correct, but your JSON-LD syntax is wrong.", format, format2, tab);
                 }else{
                     showAlert("The format you inserted is not the same as the selected format.", format, format2, tab);
@@ -429,7 +416,7 @@
 	                feedback = validate(fileValue, validatorRules, afterValidate);
 	            });  
 	    	}catch(error){
-                if($(format).val() == "turtle" && fileValue.substring(0,7) == "@prefix"){
+                if($(format).val() == "turtle" && turtlePatt.test(fileValue)){
                     showAlert("The format you inserted is correct, but your Turtle syntax is wrong.", format, format2, tab);
                 }else{
                     showAlert("The format you inserted is not the same as the selected format.", format, format2, tab);
@@ -613,7 +600,7 @@
             });
         });
     }
-    
+
 
     // ==========================================================================================
     // ============================== HARD CODED VALIDATION RULES ===============================

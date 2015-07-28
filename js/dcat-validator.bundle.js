@@ -1443,126 +1443,126 @@ function decodeUtf8Char (str) {
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
-	'use strict';
+  'use strict';
 
   var Arr = (typeof Uint8Array !== 'undefined')
     ? Uint8Array
     : Array
 
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-	var PLUS_URL_SAFE = '-'.charCodeAt(0)
-	var SLASH_URL_SAFE = '_'.charCodeAt(0)
+  var PLUS   = '+'.charCodeAt(0)
+  var SLASH  = '/'.charCodeAt(0)
+  var NUMBER = '0'.charCodeAt(0)
+  var LOWER  = 'a'.charCodeAt(0)
+  var UPPER  = 'A'.charCodeAt(0)
+  var PLUS_URL_SAFE = '-'.charCodeAt(0)
+  var SLASH_URL_SAFE = '_'.charCodeAt(0)
 
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS ||
-		    code === PLUS_URL_SAFE)
-			return 62 // '+'
-		if (code === SLASH ||
-		    code === SLASH_URL_SAFE)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
+  function decode (elt) {
+    var code = elt.charCodeAt(0)
+    if (code === PLUS ||
+        code === PLUS_URL_SAFE)
+      return 62 // '+'
+    if (code === SLASH ||
+        code === SLASH_URL_SAFE)
+      return 63 // '/'
+    if (code < NUMBER)
+      return -1 //no match
+    if (code < NUMBER + 10)
+      return code - NUMBER + 26 + 26
+    if (code < UPPER + 26)
+      return code - UPPER
+    if (code < LOWER + 26)
+      return code - LOWER + 26
+  }
 
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
+  function b64ToByteArray (b64) {
+    var i, j, l, tmp, placeHolders, arr
 
-		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
-		}
+    if (b64.length % 4 > 0) {
+      throw new Error('Invalid string. Length must be a multiple of 4')
+    }
 
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+    // the number of equal signs (place holders)
+    // if there are two placeholders, than the two characters before it
+    // represent one byte
+    // if there is only one, then the three characters before it represent 2 bytes
+    // this is just a cheap hack to not do indexOf twice
+    var len = b64.length
+    placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
 
-		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
+    // base64 is 4/3 + up to two characters of the original data
+    arr = new Arr(b64.length * 3 / 4 - placeHolders)
 
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
+    // if there are placeholders, only get up to the last complete 4 chars
+    l = placeHolders > 0 ? b64.length - 4 : b64.length
 
-		var L = 0
+    var L = 0
 
-		function push (v) {
-			arr[L++] = v
-		}
+    function push (v) {
+      arr[L++] = v
+    }
 
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
-		}
+    for (i = 0, j = 0; i < l; i += 4, j += 3) {
+      tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+      push((tmp & 0xFF0000) >> 16)
+      push((tmp & 0xFF00) >> 8)
+      push(tmp & 0xFF)
+    }
 
-		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
-		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
-		}
+    if (placeHolders === 2) {
+      tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+      push(tmp & 0xFF)
+    } else if (placeHolders === 1) {
+      tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+      push((tmp >> 8) & 0xFF)
+      push(tmp & 0xFF)
+    }
 
-		return arr
-	}
+    return arr
+  }
 
-	function uint8ToBase64 (uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length
+  function uint8ToBase64 (uint8) {
+    var i,
+      extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+      output = "",
+      temp, length
 
-		function encode (num) {
-			return lookup.charAt(num)
-		}
+    function encode (num) {
+      return lookup.charAt(num)
+    }
 
-		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
+    function tripletToBase64 (num) {
+      return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+    }
 
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
-		}
+    // go through the array every three bytes, we'll deal with trailing stuff later
+    for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+      temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+      output += tripletToBase64(temp)
+    }
 
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
-		}
+    // pad the end with zeros, but make sure to not forget the extra bytes
+    switch (extraBytes) {
+      case 1:
+        temp = uint8[uint8.length - 1]
+        output += encode(temp >> 2)
+        output += encode((temp << 4) & 0x3F)
+        output += '=='
+        break
+      case 2:
+        temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+        output += encode(temp >> 10)
+        output += encode((temp >> 4) & 0x3F)
+        output += encode((temp << 2) & 0x3F)
+        output += '='
+        break
+    }
 
-		return output
-	}
+    return output
+  }
 
-	exports.toByteArray = b64ToByteArray
-	exports.fromByteArray = uint8ToBase64
+  exports.toByteArray = b64ToByteArray
+  exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],4:[function(require,module,exports){
@@ -6883,8 +6883,8 @@ function validate(dcat, rules, callback) {
 
     //create an array with errors and warnings that contain objects with errror messages
     feedback = {};
-    feedback['errors'] = {};
-    feedback['warnings'] = {};
+    feedback['errors'] = [];
+    feedback['warnings'] = [];
 
     var parser = N3.Parser();
     parser.parse(dcat, function (error, triple, prefixes) {
@@ -6908,9 +6908,31 @@ function validate(dcat, rules, callback) {
                         validateClass(className, classes[keyClass].subject);
                     }
                 } else if(classes.length === 0) {
-                    feedback['errors']['The class: Catalog, is mandatory'] = [];
+
+                    //Push all the information about the error into the array
+                    feedback['errors'].push({
+                        'class': 'Catalog',
+                        'URIClass': null,
+                        'error': {
+                            'message': 'is mandatory',
+                            'property': null,
+                            'URIProperty': null,
+                            'valueProperty': null
+                        }
+                    });
                 } else {
-                    feedback['errors']['Multiple Catalog classes initialized'] = [];
+
+                    //Push all the information about the error into the array
+                    feedback['errors'].push({
+                        'class': 'Catalog',
+                        'URIClass': null,
+                        'error': {
+                            'message': 'mutiple',
+                            'property': null,
+                            'URIProperty': null,
+                            'valueProperty': null
+                        }
+                    });
                 }
             }
            
@@ -6945,18 +6967,18 @@ var validateClass = function(className, URI) {
 
             //Check if their are multiple objects found and if it is allowed, if not put an error
             if(foundObjects.length > 1 && !jsonClass.properties[property].multiple) {
-                if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
-                    feedback['errors'][className + ' class: ' + URI] = [];
-                }
-
-                console.log('The property: ' + jsonClass.properties[property].name + ', can\'t have multiple objects');
-
-                for(object in foundObjects) {
-                    //console.log(N3Util.getLiteralLanguage(foundObjects[object].object));
-                    console.log(foundObjects[object]);
-                }
-
-                feedback['errors'][className + ' class: ' + URI].push({'error':'The property: ' + jsonClass.properties[property].name + ', can\'t have multiple objects'});
+                
+                //Push all the information about the error into the array
+                feedback['errors'].push({
+                    'class': className,
+                    'URIClass': URI,
+                    'error': {
+                        'message': 'can\'t have multiple objects',
+                        'property': jsonClass.properties[property].name,
+                        'URIProperty': jsonClass.properties[property].URI,
+                        'valueProperty': null
+                    }
+                });
             } else {
 
                 //Loop through the found objects and validate them
@@ -6965,11 +6987,18 @@ var validateClass = function(className, URI) {
                     //Check literals
                     if(jsonClass.properties[property].Range == 'Literal') {
                         if(!N3Util.isLiteral(foundObjects[foundObject].object)) {
-                            if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
-                                feedback['errors'][className + ' class: ' + URI] = [];
-                            }
 
-                            feedback['errors'][className + ' class: ' + URI].push({'error':'The object: ' + foundObjects[foundObject].object + ', of the property: ' + jsonClass.properties[property].name + ', needs to be a Literal'});
+                            //Push all the information about the error into the array
+                            feedback['errors'].push({
+                                'class': className,
+                                'URIClass': URI,
+                                'error': {
+                                    'message': 'needs to be a Literal',
+                                    'property': jsonClass.properties[property].name,
+                                    'URIProperty': jsonClass.properties[property].URI,
+                                    'valueProperty': foundObjects[foundObject].object
+                                }
+                            });
                         }
 
                     //Check datetime literals    
@@ -6987,11 +7016,18 @@ var validateClass = function(className, URI) {
 
                         //If the object isn't a literal or the date isn't valid put an error
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || !isDate) {
-                            if(typeof feedzouback['errors'][className + ' class: ' + URI] == 'undefined') {
-                                feedback['errors'][className + ' class: ' + URI] = [];
-                            }
 
-                            feedback['errors'][className + ' class: ' + URI].push({'error':'The object: ' + foundObjects[foundObject].object + ', of the property: ' + jsonClass.properties[property].name + ', needs to be a correct ISO 8601 date'});
+                            //Push all the information about the error into the array
+                            feedback['errors'].push({
+                                'class': className,
+                                'URIClass': URI,
+                                'error': {
+                                    'message': 'needs to be a correct ISO 8601 date',
+                                    'property': jsonClass.properties[property].name,
+                                    'URIProperty': jsonClass.properties[property].URI,
+                                    'valueProperty': foundObjects[foundObject].object
+                                }
+                            });
                         }
 
                     //Check decimal literals
@@ -7001,11 +7037,18 @@ var validateClass = function(className, URI) {
                         var decimal = N3Util.getLiteralValue(foundObjects[foundObject].object);
 
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || isNaN(decimal)) {
-                            if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
-                                feedback['errors'][className + ' class: ' + URI] = [];
-                            }
 
-                            feedback['errors'][className + ' class: ' + URI].push({'error':'The object: ' + foundObjects[foundObject].object + ', of the property: ' + jsonClass.properties[property].name + ', needs to be a number'});
+                            //Push all the information about the error into the array
+                            feedback['errors'].push({
+                                'class': className,
+                                'URIClass': URI,
+                                'error': {
+                                    'message': 'needs to be a number',
+                                    'property': jsonClass.properties[property].name,
+                                    'URIProperty': jsonClass.properties[property].URI,
+                                    'valueProperty': foundObjects[foundObject].object
+                                }
+                            });
                         }
 
                     //Check URI's
@@ -7014,11 +7057,18 @@ var validateClass = function(className, URI) {
                         //check if the found object is a URI and if it may be a literal if it doesn't put an error
                         if(!N3Util.isIRI(foundObjects[foundObject].object)) {
                             if(jsonClass.properties[property].Range != 'Anything') {
-                                if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
-                                    feedback['errors'][className + ' class: ' + URI] = [];
-                                }
-
-                                feedback['errors'][className + ' class: ' + URI].push({'error':'The object: ' + foundObjects[foundObject].object + ', of the property: ' + jsonClass.properties[property].name + ', needs to be a URI'});
+                            
+                                //Push all the information about the error into the array
+                                feedback['errors'].push({
+                                    'class': className,
+                                    'URIClass': URI,
+                                    'error': {
+                                        'message': 'needs to be a URI',
+                                        'property': jsonClass.properties[property].name,
+                                        'URIProperty': jsonClass.properties[property].URI,
+                                        'valueProperty': foundObjects[foundObject].object
+                                    }
+                                });
                             }
                         } else {
 
@@ -7066,16 +7116,30 @@ var validateClass = function(className, URI) {
                                     //Check if the uninitializedClassName is found
                                     if(uninitializedClassName != '') {
 
-                                        //Check if the error is already displayed, if not put error in array
-                                        if(typeof feedback['errors'][uninitializedClassName + ' class: ' + foundObjects[foundObject].object] == 'undefined') {
-                                            feedback['errors'][uninitializedClassName + ' class: ' + foundObjects[foundObject].object + ' needs to be initialized'] = [];
-                                        }
+                                        //Push all the information about the error into the array
+                                        feedback['errors'].push({
+                                            'class': uninitializedClassName,
+                                            'URIClass': foundObjects[foundObject].object,
+                                            'error': {
+                                                'message': 'needs to be initialized',
+                                                'property': null,
+                                                'URIProperty': null,
+                                                'valueProperty': null
+                                            }
+                                        });
                                     } else {
-                                        
-                                        //Check if the error is already displayed, if not put error in array
-                                        if(typeof feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object] == 'undefined') {
-                                            feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object + ' needs to be initialized'] = [];
-                                        }
+
+                                        //Push all the information about the error into the array
+                                        feedback['errors'].push({
+                                            'class': jsonClass.properties[property].Range,
+                                            'URIClass': foundObjects[foundObject].object,
+                                            'error': {
+                                                'message': 'needs to be initialized',
+                                                'property': null,
+                                                'URIProperty': null,
+                                                'valueProperty': null
+                                            }
+                                        });
                                     }
                                 }
                             }
@@ -7090,19 +7154,32 @@ var validateClass = function(className, URI) {
 
                 //If the property is mandatory put an error in the array            
                 if(jsonClass.properties[property].required == 'mandatory') {
-                    if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
-                        feedback['errors'][className + ' class: ' + URI] = [];
-                    }
 
-                    feedback['errors'][className + ' class: ' + URI].push({'error':'The property: ' + jsonClass.properties[property].name + ', is mandatory'});
-
+                    //Push all the information about the error into the array
+                    feedback['errors'].push({
+                        'class': className,
+                        'URIClass': URI,
+                        'error': {
+                            'message': 'is mandatory',
+                            'property': jsonClass.properties[property].name,
+                            'URIProperty': jsonClass.properties[property].URI,
+                            'valueProperty': null
+                        }
+                    });
                 //If the property is recommended put a warning in the array  
                 } else if(jsonClass.properties[property].required == 'recommended') {
-                    if(typeof feedback['warnings'][className + ' class: ' + URI] == 'undefined') {
-                        feedback['warnings'][className + ' class: ' + URI] = [];
-                    }
 
-                    feedback['warnings'][className + ' class: ' + URI].push({'error':'The property: ' + jsonClass.properties[property].name + ', is recommended'});
+                    //Push all the information about the error into the array
+                    feedback['warnings'].push({
+                        'class': className,
+                        'URIClass': URI,
+                        'error': {
+                            'message': 'is recommended',
+                            'property': jsonClass.properties[property].name,
+                            'URIProperty': jsonClass.properties[property].URI,
+                            'valueProperty': null
+                        }
+                    });
                 }
             }
         }
