@@ -511,35 +511,41 @@
             var panel = $("<div>", {class:"panel panel-default"});
             var panelBody = $("<div>", {class:"panel-body down" + number});
             var panelFooter = $("<div>", {class:"panel-footer panel-footer-down" + number});
+            var list2 = $("<ul>", {class:"list"});
+            var showURI = $("<span>", {class:"showURI"});
+            var error = $ ("<p>", {class:"errorTitle"});
+            var expandError = $('<span></span>', {class:"glyphicon arrow glyphicon-chevron-down"});
+            // Add the panelBody to the panel
             panel.append(panelBody);
             // if the class doesn't have properties then it doens't need to show a panelfooter with properties
             if(feedback[type][message].error[0].property != null){
+                // Add the panelfooter and list and URI's to the panel
                 panel.append(panelFooter);
-                var showURI = $("<span>", {class:"showURI"});
                 showURI.append("Show URI's")
                 panelFooter.append(showURI);
-                var list2 = $("<ul>", {class:"list"});
                 panelFooter.append(list2);
             }
+            // Add the panel to the container
             container.append(panel);
             
-            var error = $ ("<p>", {class:"errorTitle"});
+            // Add a glyph to the error
             error.append('<span class="glyphicon glyphicon-' + glyph +'-sign"></span>');
-            // if the class doesn't have properties then it doens't need to be expandable
+            // if the class doesn't have properties, extra info will be added to the main message
             if(feedback[type][message].error[0].property != null){
                 error.append("<strong>Resource: </strong>" + feedback[type][message].class + " class: " + feedback[type][message].URIClass);
             }else{
                 error.append("<strong>Resource: </strong>" + feedback[type][message].class + " class: " + feedback[type][message].URIClass + " " + feedback[type][message].error[0].message);
             }
-
+            // if the class doesn't have properties then it doens't need to be expandable
             if(feedback[type][message].error[0].property != null){
-                var expandError = $('<span></span>', {class:"glyphicon arrow glyphicon-chevron-down"});
                 error.append(expandError);
             }
+            // Add errors/warnings to the panelBody
             panelBody.append(error);
 
             // Show the different properties per error or warning
             for(message2 in feedback[type][message].error){
+                // Show only these properties if there are properties present
                 if(feedback[type][message].error[message2].property != null){
                     var listItem = $("<li>");
                     var listBr = $("<br />");
@@ -615,6 +621,8 @@
             dropDown(expandBtns);
         }
 
+        // Get all the showURI buttons and put them in an array
+        // If this array contains the different buttons call the dropdown2 function
         showURIs = document.querySelectorAll(".showURI");
         if(showURIs){
             dropDown2(showURIs);
@@ -633,6 +641,7 @@
         });
     }
 
+    // Function that meks it possible to show or hide the different URI's per property
     function dropDown2(array){
         [].forEach.call(array, function(btn){
             btn.addEventListener("click", function(event){
