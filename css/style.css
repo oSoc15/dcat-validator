@@ -294,6 +294,36 @@ footer p{
   transform: rotate(180deg);
 }
 
+.list li span{
+  margin-bottom:10px;
+}
+
+.list li span{
+  display:none;
+}
+
+.list li a{
+  color:#CCC;
+  font-style:italic;
+  font-size:0.9em;
+}
+
+.showURI{
+  float:right;
+  color:#009688;
+  font-size:0.9em;
+  font-style:italic;
+}
+
+.showURIs{
+  display:block !important;
+}
+
+.showURI:hover{
+  cursor:pointer;
+  color:#00AB9B;
+}
+
 /* --------------------------------- */
 /* ----------- ABOUT PAGE ---------- */
 /* --------------------------------- */

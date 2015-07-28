@@ -6883,8 +6883,8 @@ function validate(dcat, rules, callback) {
 
     //create an array with errors and warnings that contain objects with errror messages
     feedback = {};
-    feedback['errors'] = [];
-    feedback['warnings'] = [];
+    feedback['errors'] = {};
+    feedback['warnings'] = {};
 
     var parser = N3.Parser();
     parser.parse(dcat, function (error, triple, prefixes) {
@@ -6909,29 +6909,40 @@ function validate(dcat, rules, callback) {
                     }
                 } else if(classes.length === 0) {
 
+                    //Check if the specific array already exists
+                    if(feedback['errors']['Catalog '] == undefined) {
+
+                        feedback['errors']['Catalog '] = {
+                            'class': 'Catalog',
+                            'URIClass': null,
+                            'error': []
+                        };
+                    }
+
                     //Push all the information about the error into the array
-                    feedback['errors'].push({
-                        'class': 'Catalog',
-                        'URIClass': null,
-                        'error': {
-                            'message': 'is mandatory',
-                            'property': null,
-                            'URIProperty': null,
-                            'valueProperty': null
-                        }
+                    feedback['errors']['Catalog '].error.push({
+                        'message': 'is mandatory',
+                        'property': null,
+                        'URIProperty': null,
+                        'valueProperty': null
                     });
                 } else {
 
+                    //Check if the specific array already exists
+                    if(feedback['errors']['Catalog '] == undefined) {
+                        feedback['errors']['Catalog '] = {
+                            'class': 'Catalog',
+                            'URIClass': null,
+                            'error': []
+                        };
+                    }
+
                     //Push all the information about the error into the array
-                    feedback['errors'].push({
-                        'class': 'Catalog',
-                        'URIClass': null,
-                        'error': {
-                            'message': 'mutiple',
-                            'property': null,
-                            'URIProperty': null,
-                            'valueProperty': null
-                        }
+                    feedback['errors']['Catalog '].error.push({
+                        'message': 'mutiple',
+                        'property': null,
+                        'URIProperty': null,
+                        'valueProperty': null
                     });
                 }
             }
@@ -6968,16 +6979,21 @@ var validateClass = function(className, URI) {
             //Check if their are multiple objects found and if it is allowed, if not put an error
             if(foundObjects.length > 1 && !jsonClass.properties[property].multiple) {
                 
+                //Check if the specific array already exists
+                if(feedback['errors'][className + ' ' + URI] == undefined) {
+                    feedback['errors'][className + ' ' + URI] = {
+                        'class': className,
+                        'URIClass': URI,
+                        'error': []
+                    };
+                }
+
                 //Push all the information about the error into the array
-                feedback['errors'].push({
-                    'class': className,
-                    'URIClass': URI,
-                    'error': {
-                        'message': 'can\'t have multiple objects',
-                        'property': jsonClass.properties[property].name,
-                        'URIProperty': jsonClass.properties[property].URI,
-                        'valueProperty': null
-                    }
+                feedback['errors'][className + ' ' + URI].error.push({
+                    'message': 'can\'t have multiple objects',
+                    'property': jsonClass.properties[property].name,
+                    'URIProperty': jsonClass.properties[property].URI,
+                    'valueProperty': null
                 });
             } else {
 
@@ -6988,16 +7004,21 @@ var validateClass = function(className, URI) {
                     if(jsonClass.properties[property].Range == 'Literal') {
                         if(!N3Util.isLiteral(foundObjects[foundObject].object)) {
 
+                            //Check if the specific array already exists
+                            if(feedback['errors'][className + ' ' + URI] == undefined) {
+                                feedback['errors'][className + ' ' + URI] = {
+                                    'class': className,
+                                    'URIClass': URI,
+                                    'error': []
+                                };
+                            }
+
                             //Push all the information about the error into the array
-                            feedback['errors'].push({
-                                'class': className,
-                                'URIClass': URI,
-                                'error': {
-                                    'message': 'needs to be a Literal',
-                                    'property': jsonClass.properties[property].name,
-                                    'URIProperty': jsonClass.properties[property].URI,
-                                    'valueProperty': foundObjects[foundObject].object
-                                }
+                            feedback['errors'][className + ' ' + URI].error.push({
+                                'message': 'needs to be a Literal',
+                                'property': jsonClass.properties[property].name,
+                                'URIProperty': jsonClass.properties[property].URI,
+                                'valueProperty': foundObjects[foundObject].object
                             });
                         }
 
@@ -7017,16 +7038,21 @@ var validateClass = function(className, URI) {
                         //If the object isn't a literal or the date isn't valid put an error
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || !isDate) {
 
+                            //Check if the specific array already exists
+                            if(feedback['errors'][className + ' ' + URI] == undefined) {
+                                feedback['errors'][className + ' ' + URI] = {
+                                    'class': className,
+                                    'URIClass': URI,
+                                    'error': []
+                                };
+                            }
+
                             //Push all the information about the error into the array
-                            feedback['errors'].push({
-                                'class': className,
-                                'URIClass': URI,
-                                'error': {
-                                    'message': 'needs to be a correct ISO 8601 date',
-                                    'property': jsonClass.properties[property].name,
-                                    'URIProperty': jsonClass.properties[property].URI,
-                                    'valueProperty': foundObjects[foundObject].object
-                                }
+                            feedback['errors'][className + ' ' + URI].error.push({
+                                'message': 'needs to be a correct ISO 8601 date',
+                                'property': jsonClass.properties[property].name,
+                                'URIProperty': jsonClass.properties[property].URI,
+                                'valueProperty': foundObjects[foundObject].object
                             });
                         }
 
@@ -7038,16 +7064,21 @@ var validateClass = function(className, URI) {
 
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || isNaN(decimal)) {
 
+                            //Check if the specific array already exists
+                            if(feedback['errors'][className + ' ' + URI] == undefined) {
+                                feedback['errors'][className + ' ' + URI] = {
+                                    'class': className,
+                                    'URIClass': URI,
+                                    'error': []
+                                };
+                            }
+
                             //Push all the information about the error into the array
-                            feedback['errors'].push({
-                                'class': className,
-                                'URIClass': URI,
-                                'error': {
-                                    'message': 'needs to be a number',
-                                    'property': jsonClass.properties[property].name,
-                                    'URIProperty': jsonClass.properties[property].URI,
-                                    'valueProperty': foundObjects[foundObject].object
-                                }
+                            feedback['errors'][className + ' ' + URI].error.push({
+                                'message': 'needs to be a number',
+                                'property': jsonClass.properties[property].name,
+                                'URIProperty': jsonClass.properties[property].URI,
+                                'valueProperty': foundObjects[foundObject].object
                             });
                         }
 
@@ -7058,16 +7089,21 @@ var validateClass = function(className, URI) {
                         if(!N3Util.isIRI(foundObjects[foundObject].object)) {
                             if(jsonClass.properties[property].Range != 'Anything') {
                             
+                                //Check if the specific array already exists
+                                if(feedback['errors'][className + ' ' + URI] == undefined) {
+                                    feedback['errors'][className + ' ' + URI] = {
+                                        'class': className,
+                                        'URIClass': URI,
+                                        'error': []
+                                    };
+                                }
+
                                 //Push all the information about the error into the array
-                                feedback['errors'].push({
-                                    'class': className,
-                                    'URIClass': URI,
-                                    'error': {
-                                        'message': 'needs to be a URI',
-                                        'property': jsonClass.properties[property].name,
-                                        'URIProperty': jsonClass.properties[property].URI,
-                                        'valueProperty': foundObjects[foundObject].object
-                                    }
+                                feedback['errors'][className + ' ' + URI].error.push({
+                                    'message': 'needs to be a URI',
+                                    'property': jsonClass.properties[property].name,
+                                    'URIProperty': jsonClass.properties[property].URI,
+                                    'valueProperty': foundObjects[foundObject].object
                                 });
                             }
                         } else {
@@ -7116,29 +7152,39 @@ var validateClass = function(className, URI) {
                                     //Check if the uninitializedClassName is found
                                     if(uninitializedClassName != '') {
 
+                                        //Check if the specific array already exists
+                                        if(feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object] == undefined) {
+                                            feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object] = {
+                                                'class': uninitializedClassName,
+                                                'URIClass': foundObjects[foundObject].object,
+                                                'error': []
+                                            };
+                                        }
+
                                         //Push all the information about the error into the array
-                                        feedback['errors'].push({
-                                            'class': uninitializedClassName,
-                                            'URIClass': foundObjects[foundObject].object,
-                                            'error': {
-                                                'message': 'needs to be initialized',
-                                                'property': null,
-                                                'URIProperty': null,
-                                                'valueProperty': null
-                                            }
+                                        feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object].error.push({
+                                            'message': 'needs to be initialized',
+                                            'property': null,
+                                            'URIProperty': null,
+                                            'valueProperty': null
                                         });
                                     } else {
 
+                                        //Check if the specific array already exists
+                                        if(feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object] == undefined) {
+                                            feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object] = {
+                                                'class': jsonClass.properties[property].Range,
+                                                'URIClass': foundObjects[foundObject].object,
+                                                'error': []
+                                            };
+                                        }
+
                                         //Push all the information about the error into the array
-                                        feedback['errors'].push({
-                                            'class': jsonClass.properties[property].Range,
-                                            'URIClass': foundObjects[foundObject].object,
-                                            'error': {
+                                        feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object].error.push({
                                                 'message': 'needs to be initialized',
                                                 'property': null,
                                                 'URIProperty': null,
                                                 'valueProperty': null
-                                            }
                                         });
                                     }
                                 }
@@ -7155,30 +7201,40 @@ var validateClass = function(className, URI) {
                 //If the property is mandatory put an error in the array            
                 if(jsonClass.properties[property].required == 'mandatory') {
 
+                    //Check if the specific array already exists
+                    if(feedback['errors'][className + ' ' + URI] == undefined) {
+                        feedback['errors'][className + ' ' + URI] = {
+                            'class': className,
+                            'URIClass': URI,
+                            'error': []
+                        };
+                    }
+
                     //Push all the information about the error into the array
-                    feedback['errors'].push({
-                        'class': className,
-                        'URIClass': URI,
-                        'error': {
-                            'message': 'is mandatory',
-                            'property': jsonClass.properties[property].name,
-                            'URIProperty': jsonClass.properties[property].URI,
-                            'valueProperty': null
-                        }
+                    feedback['errors'][className + ' ' + URI].error.push({
+                        'message': 'is mandatory',
+                        'property': jsonClass.properties[property].name,
+                        'URIProperty': jsonClass.properties[property].URI,
+                        'valueProperty': null
                     });
                 //If the property is recommended put a warning in the array  
                 } else if(jsonClass.properties[property].required == 'recommended') {
 
+                    //Check if the specific array already exists
+                    if(feedback['warnings'][className + ' ' + URI] == undefined) {
+                        feedback['warnings'][className + ' ' + URI] = {
+                            'class': className,
+                            'URIClass': URI,
+                            'error': []
+                        };
+                    }
+
                     //Push all the information about the error into the array
-                    feedback['warnings'].push({
-                        'class': className,
-                        'URIClass': URI,
-                        'error': {
-                            'message': 'is recommended',
-                            'property': jsonClass.properties[property].name,
-                            'URIProperty': jsonClass.properties[property].URI,
-                            'valueProperty': null
-                        }
+                    feedback['warnings'][className + ' ' + URI].error.push({
+                        'message': 'is recommended',
+                        'property': jsonClass.properties[property].name,
+                        'URIProperty': jsonClass.properties[property].URI,
+                        'valueProperty': null
                     });
                 }
             }
