@@ -1443,126 +1443,126 @@ function decodeUtf8Char (str) {
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
-  'use strict';
+	'use strict';
 
   var Arr = (typeof Uint8Array !== 'undefined')
     ? Uint8Array
     : Array
 
-  var PLUS   = '+'.charCodeAt(0)
-  var SLASH  = '/'.charCodeAt(0)
-  var NUMBER = '0'.charCodeAt(0)
-  var LOWER  = 'a'.charCodeAt(0)
-  var UPPER  = 'A'.charCodeAt(0)
-  var PLUS_URL_SAFE = '-'.charCodeAt(0)
-  var SLASH_URL_SAFE = '_'.charCodeAt(0)
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+	var PLUS_URL_SAFE = '-'.charCodeAt(0)
+	var SLASH_URL_SAFE = '_'.charCodeAt(0)
 
-  function decode (elt) {
-    var code = elt.charCodeAt(0)
-    if (code === PLUS ||
-        code === PLUS_URL_SAFE)
-      return 62 // '+'
-    if (code === SLASH ||
-        code === SLASH_URL_SAFE)
-      return 63 // '/'
-    if (code < NUMBER)
-      return -1 //no match
-    if (code < NUMBER + 10)
-      return code - NUMBER + 26 + 26
-    if (code < UPPER + 26)
-      return code - UPPER
-    if (code < LOWER + 26)
-      return code - LOWER + 26
-  }
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if (code === PLUS ||
+		    code === PLUS_URL_SAFE)
+			return 62 // '+'
+		if (code === SLASH ||
+		    code === SLASH_URL_SAFE)
+			return 63 // '/'
+		if (code < NUMBER)
+			return -1 //no match
+		if (code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if (code < UPPER + 26)
+			return code - UPPER
+		if (code < LOWER + 26)
+			return code - LOWER + 26
+	}
 
-  function b64ToByteArray (b64) {
-    var i, j, l, tmp, placeHolders, arr
+	function b64ToByteArray (b64) {
+		var i, j, l, tmp, placeHolders, arr
 
-    if (b64.length % 4 > 0) {
-      throw new Error('Invalid string. Length must be a multiple of 4')
-    }
+		if (b64.length % 4 > 0) {
+			throw new Error('Invalid string. Length must be a multiple of 4')
+		}
 
-    // the number of equal signs (place holders)
-    // if there are two placeholders, than the two characters before it
-    // represent one byte
-    // if there is only one, then the three characters before it represent 2 bytes
-    // this is just a cheap hack to not do indexOf twice
-    var len = b64.length
-    placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+		// the number of equal signs (place holders)
+		// if there are two placeholders, than the two characters before it
+		// represent one byte
+		// if there is only one, then the three characters before it represent 2 bytes
+		// this is just a cheap hack to not do indexOf twice
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
 
-    // base64 is 4/3 + up to two characters of the original data
-    arr = new Arr(b64.length * 3 / 4 - placeHolders)
+		// base64 is 4/3 + up to two characters of the original data
+		arr = new Arr(b64.length * 3 / 4 - placeHolders)
 
-    // if there are placeholders, only get up to the last complete 4 chars
-    l = placeHolders > 0 ? b64.length - 4 : b64.length
+		// if there are placeholders, only get up to the last complete 4 chars
+		l = placeHolders > 0 ? b64.length - 4 : b64.length
 
-    var L = 0
+		var L = 0
 
-    function push (v) {
-      arr[L++] = v
-    }
+		function push (v) {
+			arr[L++] = v
+		}
 
-    for (i = 0, j = 0; i < l; i += 4, j += 3) {
-      tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-      push((tmp & 0xFF0000) >> 16)
-      push((tmp & 0xFF00) >> 8)
-      push(tmp & 0xFF)
-    }
+		for (i = 0, j = 0; i < l; i += 4, j += 3) {
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+			push((tmp & 0xFF0000) >> 16)
+			push((tmp & 0xFF00) >> 8)
+			push(tmp & 0xFF)
+		}
 
-    if (placeHolders === 2) {
-      tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-      push(tmp & 0xFF)
-    } else if (placeHolders === 1) {
-      tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-      push((tmp >> 8) & 0xFF)
-      push(tmp & 0xFF)
-    }
+		if (placeHolders === 2) {
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+			push(tmp & 0xFF)
+		} else if (placeHolders === 1) {
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+			push((tmp >> 8) & 0xFF)
+			push(tmp & 0xFF)
+		}
 
-    return arr
-  }
+		return arr
+	}
 
-  function uint8ToBase64 (uint8) {
-    var i,
-      extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-      output = "",
-      temp, length
+	function uint8ToBase64 (uint8) {
+		var i,
+			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+			output = "",
+			temp, length
 
-    function encode (num) {
-      return lookup.charAt(num)
-    }
+		function encode (num) {
+			return lookup.charAt(num)
+		}
 
-    function tripletToBase64 (num) {
-      return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-    }
+		function tripletToBase64 (num) {
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+		}
 
-    // go through the array every three bytes, we'll deal with trailing stuff later
-    for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-      temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-      output += tripletToBase64(temp)
-    }
+		// go through the array every three bytes, we'll deal with trailing stuff later
+		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+			output += tripletToBase64(temp)
+		}
 
-    // pad the end with zeros, but make sure to not forget the extra bytes
-    switch (extraBytes) {
-      case 1:
-        temp = uint8[uint8.length - 1]
-        output += encode(temp >> 2)
-        output += encode((temp << 4) & 0x3F)
-        output += '=='
-        break
-      case 2:
-        temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-        output += encode(temp >> 10)
-        output += encode((temp >> 4) & 0x3F)
-        output += encode((temp << 2) & 0x3F)
-        output += '='
-        break
-    }
+		// pad the end with zeros, but make sure to not forget the extra bytes
+		switch (extraBytes) {
+			case 1:
+				temp = uint8[uint8.length - 1]
+				output += encode(temp >> 2)
+				output += encode((temp << 4) & 0x3F)
+				output += '=='
+				break
+			case 2:
+				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+				output += encode(temp >> 10)
+				output += encode((temp >> 4) & 0x3F)
+				output += encode((temp << 2) & 0x3F)
+				output += '='
+				break
+		}
 
-    return output
-  }
+		return output
+	}
 
-  exports.toByteArray = b64ToByteArray
-  exports.fromByteArray = uint8ToBase64
+	exports.toByteArray = b64ToByteArray
+	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
 },{}],4:[function(require,module,exports){
@@ -6864,6 +6864,9 @@ var store;
 //variable that can access the functionality to check if a variable is a literal or a URI
 var N3Util;
 
+//the validation rules of DCAT (passed in the validate fuction as an argument)
+var validatorRules;
+
 //create an array with errors and warnings that contain objects with errror messages
 var feedback;
 
@@ -6871,11 +6874,12 @@ var feedback;
 var checkedClasses = [];
 
 //The validation function with a callback to start the code after this function is done
-function validate(dcat, callback) {
+function validate(dcat, rules, callback) {
 
-    //Initialize store and N3Util
+    //Initialize store, N3Util and validatorRules
     store = N3.Store();
     N3Util = N3.Util;
+    validatorRules = rules;
 
     //create an array with errors and warnings that contain objects with errror messages
     feedback = {};
@@ -6945,6 +6949,13 @@ var validateClass = function(className, URI) {
                     feedback['errors'][className + ' class: ' + URI] = [];
                 }
 
+                console.log('The property: ' + jsonClass.properties[property].name + ', can\'t have multiple objects');
+
+                for(object in foundObjects) {
+                    //console.log(N3Util.getLiteralLanguage(foundObjects[object].object));
+                    console.log(foundObjects[object]);
+                }
+
                 feedback['errors'][className + ' class: ' + URI].push({'error':'The property: ' + jsonClass.properties[property].name + ', can\'t have multiple objects'});
             } else {
 
@@ -6976,7 +6987,7 @@ var validateClass = function(className, URI) {
 
                         //If the object isn't a literal or the date isn't valid put an error
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || !isDate) {
-                            if(typeof feedback['errors'][className + ' class: ' + URI] == 'undefined') {
+                            if(typeof feedzouback['errors'][className + ' class: ' + URI] == 'undefined') {
                                 feedback['errors'][className + ' class: ' + URI] = [];
                             }
 
@@ -7041,8 +7052,30 @@ var validateClass = function(className, URI) {
 
                                 //If the range of the property is not 'Anything' put error 
                                 if(jsonClass.properties[property].name != 'type' && jsonClass.properties[property].Range != 'Anything') {
-                                    if(typeof feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object] == 'undefined') {
-                                        feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object + ' needs to be initialized'] = [];
+
+                                    var uninitializedClassName = '';
+
+                                    //Check the uninitialized class name
+                                    for(var checkClass in validatorRules['optional']) {
+                                        if(validatorRules['optional'][checkClass].URI == jsonClass.properties[property].Range) {
+                                            uninitializedClassName = validatorRules['optional'][checkClass].class;
+                                            break;
+                                        }
+                                    }
+
+                                    //Check if the uninitializedClassName is found
+                                    if(uninitializedClassName != '') {
+
+                                        //Check if the error is already displayed, if not put error in array
+                                        if(typeof feedback['errors'][uninitializedClassName + ' class: ' + foundObjects[foundObject].object] == 'undefined') {
+                                            feedback['errors'][uninitializedClassName + ' class: ' + foundObjects[foundObject].object + ' needs to be initialized'] = [];
+                                        }
+                                    } else {
+                                        
+                                        //Check if the error is already displayed, if not put error in array
+                                        if(typeof feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object] == 'undefined') {
+                                            feedback['errors'][jsonClass.properties[property].Range + ' class: ' + foundObjects[foundObject].object + ' needs to be initialized'] = [];
+                                        }
                                     }
                                 }
                             }
@@ -7090,543 +7123,5 @@ var isClassChecked = function(className, URI) {
 
     return checked;
 };
-
-//the hard-coded validation rules of DCAT
-var validatorRules = new Array();
-
-//The class where it all begins: 'Catalog' (mandatory)
-validatorRules['mandatory'] =
-{
-    'Catalog': {
-        'class': 'Catalog',
-        'required': 'mandatory',
-        'mutiple': false,
-        'URI': 'http://www.w3.org/ns/dcat#Catalog',
-        'properties': [ 
-            {
-                'name': 'type',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Resource',
-                'URI': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-                'multiple': false
-            },
-            {
-                'name': 'title',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/title',
-                'multiple': false
-            },
-            {
-                'name': 'description',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/description',
-                'multiple': false
-            },
-            {
-                'name': 'issued',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/issued',
-                'multiple': false
-            },
-            {
-                'name': 'modified',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/modified',
-                'multiple': false
-            },
-            {
-                'name': 'language',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/language',
-                'multiple': false
-            },
-            {
-                'name': 'publisher',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'http://xmlns.com/foaf/0.1/Agent',
-                'URI': 'http://purl.org/dc/terms/publisher',
-                'multiple': false
-            },
-            {
-                'name': 'themes',
-                'prefix': 'dcat',
-                'required': 'recommended',
-                'Range': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
-                'URI': 'http://purl.org/dc/terms/themeTaxonomy',
-                'multiple': false
-            },
-            {
-                'name': 'license',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/license',
-                'multiple': false
-            },
-            {
-                'name': 'rigths',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/rights',
-                'multiple': false
-            },
-            {
-                'name': 'spatial',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/spatial',
-                'multiple': false
-            },
-            {
-                'name': 'dataset',
-                'prefix': 'dcat',
-                'required': 'mandatory',
-                'Range': 'http://www.w3.org/ns/dcat#Dataset',
-                'URI': 'http://www.w3.org/ns/dcat#dataset',
-                'multiple': true
-            },
-            {
-                'name': 'record',
-                'prefix': 'dcat',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/dcat#record',
-                'multiple': false
-            },
-            {
-                'name': 'homepage',
-                'prefix': 'foaf',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://xmlns.com/foaf/0.1/homepage',
-                'multiple': false
-            }
-        ]
-    }
-};
-
-//The classes that can be in the DCAT feed (optional)
-validatorRules['optional'] =
-{
-    'Agent': {
-        'class': 'Agent',
-        'required': 'mandatory',
-        'mutiple': true,
-        'URI': 'http://xmlns.com/foaf/0.1/Agent',
-        'properties': [
-            {
-                'name': 'name',
-                'prefix': 'foaf',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://xmlns.com/foaf/0.1/name',
-                'multiple': false
-            },
-            {
-                'name': 'type',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'skos:Concept',
-                'URI': 'http://www.w3.org/2004/02/skos/core#type',
-                'multiple': false
-            }
-        ]
-    },
-    'Dataset': {
-        'class': 'Dataset',
-        'required': 'mandatory',
-        'mutiple': true,
-        'URI': 'http://www.w3.org/ns/dcat#Dataset',
-        'properties': [
-            {
-                'name': 'type',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
-                'URI': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
-                'multiple': false
-            },
-            {
-                'name': 'title',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/title',
-                'multiple': false
-            },
-            {
-                'name': 'description',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/description',
-                'multiple': false
-            },
-            {
-                'name': 'issued',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/issued',
-                'multiple': false
-            },
-            {
-                'name': 'modified',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/modified',
-                'multiple': false
-            },
-            {
-                'name': 'language',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/language',
-                'multiple': false
-            },
-            {
-                'name': 'publisher',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'http://xmlns.com/foaf/0.1/Agent',
-                'URI': 'http://purl.org/dc/terms/publisher',
-                'multiple': false
-            },
-            {
-                'name': 'accrualPeriodicity',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/publisher',
-                'multiple': false
-            },
-            {
-                'name': 'identifier',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/identifier',
-                'multiple': false
-            },
-            {
-                'name': 'temporal',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/temporal',
-                'multiple': false
-            },
-            {
-                'name': 'theme',
-                'prefix': 'dcat',
-                'required': 'recommended',
-                'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
-                'URI': 'http://www.w3.org/ns/dcat#theme',
-                'multiple': false
-            },
-            {
-                'name': 'relation',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Resource',
-                'URI': 'http://purl.org/dc/terms/relation',
-                'multiple': false
-            },
-            {
-                'name': 'keyword',
-                'prefix': 'dcat',
-                'required': 'recommended',
-                'Range': 'Literal',
-                'URI': 'http://www.w3.org/ns/dcat#keyword',
-                'multiple': true
-            },
-            {
-                'name': 'contactPoint',
-                'prefix': 'dcat',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/dcat#contactPoint',
-                'multiple': false
-            },
-            {
-                'name': 'temporal',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/temporal',
-                'multiple': false
-            },
-            {
-                'name': 'spatial',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/spatial',
-                'multiple': false
-            },
-            {
-                'name': 'sample',
-                'prefix': 'adms',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/adms#sample',
-                'multiple': false
-            },
-            {
-                'name': 'distribution',
-                'prefix': 'dcat',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/dcat#distribution',
-                'multiple': false
-            },
-            {
-                'name': 'landingPage',
-                'prefix': 'dcat',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/dcat#landingPage',
-                'multiple': false
-            }
-        ]
-    },
-    'Distribution': {
-        'class': 'Distribution',
-        'required': 'recommended',
-        'mutiple': true,
-        'URI': 'http://www.w3.org/ns/dcat#Distribution',
-        'properties': [
-            {
-                'name': 'title',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/title',
-                'mutiple': false
-            },
-            {
-                'name': 'description',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/description',
-                'mutiple': false
-            },
-            {
-                'name': 'issued',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/issued',
-                'mutiple': false
-            },
-            {
-                'name': 'modified',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/modified',
-                'mutiple': false
-            },
-            {
-                'name': 'language',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/language',
-                'mutiple': false
-            },
-            {
-                'name': 'license',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/license',
-                'mutiple': false
-            },
-            {
-                'name': 'rigths',
-                'prefix': 'dct',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/rights',
-                'mutiple': false
-            },
-            {
-                'name': 'accessURL',
-                'prefix': 'dcat',
-                'required': 'optional',
-                'Range': 'Resource',
-                'URI': 'http://www.w3.org/ns/dcat#accessURL',
-                'mutiple': false
-            },
-            {
-                'name': 'downloadURL',
-                'prefix': 'dcat',
-                'required': 'mandatory',
-                'Range': 'Resource',
-                'URI': 'http://www.w3.org/ns/dcat#downloadURL',
-                'mutiple': false
-            },
-            {
-                'name': 'mediaType',
-                'prefix': 'dcat',
-                'required': 'optional',
-                'Range': 'Anything',
-                'URI': 'http://www.w3.org/ns/dcat#mediaType',
-                'mutiple': false
-            },
-            {
-                'name': 'format',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'Anything',
-                'URI': 'http://purl.org/dc/terms/format',
-                'mutiple': false
-            },
-            {
-                'name': 'byteSize',
-                'prefix': 'dcat',
-                'required': 'optional',
-                'Range': 'Decimal',
-                'URI': 'http://www.w3.org/ns/dcat#byteSize',
-                'mutiple': false
-            }
-        ]
-    },
-    'Concept': {
-        'class': 'Concept',
-        'required': 'mandatory',
-        'mutiple': true,
-        'URI': 'http://www.w3.org/2004/02/skos/core#Concept',
-        'properties': [
-            {
-                'name': 'prefLabel',
-                'prefix': 'skos',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://www.w3.org/2004/02/skos/core#prefLabel',
-                'mutiple': false
-            }
-        ]
-    },
-    'ConceptScheme': {
-        'class': 'ConceptScheme',
-        'required': 'mandatory',
-        'mutiple': false,
-        'URI': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
-        'properties': [
-            {
-                'name': 'title',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/title',
-                'mutiple': false
-            }
-        ]
-    },
-    'CatalogRecord': {
-        'class': 'CatalogRecord',
-        'required': 'optional',
-        'mutiple': false,
-        'URI': 'http://www.w3.org/ns/dcat#CatalogRecord',
-        'properties': [
-            {
-                'name': 'title',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/title',
-                'mutiple': false
-            },
-            {
-                'name': 'description',
-                'prefix': 'dct',
-                'required': 'mandatory',
-                'Range': 'Literal',
-                'URI': 'http://purl.org/dc/terms/description',
-                'mutiple': false
-            },
-            {
-                'name': 'issued',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/issued',
-                'mutiple': false
-            },
-            {
-                'name': 'modified',
-                'prefix': 'dct',
-                'required': 'recommended',
-                'Range': 'DateTime',
-                'URI': 'http://purl.org/dc/terms/modified',
-                'mutiple': false
-            },
-            {
-                'name': 'primaryTopic',
-                'prefix': 'foaf',
-                'required': 'mandatory',
-                'Range': 'http://www.w3.org/ns/dcat#Dataset',
-                'URI': 'http://xmlns.com/foaf/0.1/primaryTopic',
-                'mutiple': false
-            }
-        ]
-    },
-    'LinguisticSystem': {
-        'class': 'LinguisticSystem',
-        'required': 'optional',
-        'mutiple': false,
-        'URI': 'http://purl.org/dc/terms/LinguisticSystem',
-        'properties': [
-
-        ]
-    },
-    'LicenseDocument': {
-        'class': 'LicenseDocument',
-        'required': 'recommended',
-        'mutiple': false,
-        'URI': 'http://purl.org/dc/terms/LicenseDocument',
-        'properties': [
-
-        ]
-    },
-    'Frequency': {
-        'class': 'Frequency',
-        'required': 'optional',
-        'mutiple': false,
-        'URI': 'http://purl.org/dc/terms/Frequency',
-        'properties': [
-
-        ]
-    },
-    'Document': {
-        'class': 'Document',
-        'required': 'optional',
-        'mutiple': false,
-        'URI': 'http://xmlns.com/foaf/0.1/Document',
-        'properties': [
-
-        ]
-    }
-};
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./node_modules/n3/n3":32}]},{},[33]);

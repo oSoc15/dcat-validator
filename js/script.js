@@ -146,7 +146,7 @@
     	}
     }
 
-    // This function selects a parser for the selected format
+    // This function selects a parser for the selected format, the function ajaxCallTab1 is executed which contains an ajax call an continues to parse and serialize
     function selectParserTab1(value){
         if($(".formatSelectTab1").val() == "rdfxml"){
             ajaxCallTab1("xml", "rdfxml", rdf.parseRdfXml, value);
@@ -182,6 +182,12 @@
         }
     }
 
+    // function that executes an ajax call, when this call is successfull, it will call the function catchError
+    // arguments:
+    // -- format: the format from the content-Type
+    // -- selectFormat: the value from the selected format in the select box
+    // -- parseFunction: The function that parses the feed
+    // -- value: The value that will be parsed
     function ajaxCallTab1(format, selectFormat, parseFunction, value){
         // ajax call
         var xhr = $.ajax({
@@ -241,6 +247,11 @@
         if(file){
             var fileExt = file.name.split('.').pop();
         }
+        if(fileExt == "ttl"){
+            fileExt = "turtle";
+        }else if(fileExt == "xml"){
+            fileExt = "rdfxml";
+        }
 
         // clear the red borders from tab1 and tab3
         clearBorders("tab1", "", "tab3");
@@ -289,9 +300,9 @@
 
     // This function executes the catchError function which determines which parser is executed to serialize everything to turtle
     function selectParserTab2(fileExt){
-        catchError(fileExt == "xml" && $(".formatTab2").val() == "rdfxml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+        catchError(fileExt == "rdfxml" && $(".formatTab2").val() == "rdfxml", rdf.parseRdfXml, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
 	    catchError(fileExt == "jsonld" && $(".formatTab2").val() == "jsonld", rdf.parseJsonLd, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
-	    catchError(fileExt == "ttl" && $(".formatTab2").val() == "turtle", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
+	    catchError(fileExt == "turtle" && $(".formatTab2").val() == "turtle", rdf.parseTurtle, uploadFileValue, ".formatTab2", ".feedbackInput", "#tab2");
     }
 
     // ==========================================================================================
@@ -350,7 +361,7 @@
         //////////////////////////////////////////////////////////
         
         // the catchError function is called which selects the right parser and then serializes to Turtle
-	    catchError($(".formatTab3").val() == "rdfxml" && checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
+	    catchError($(".formatTab3").val() == "rdfxml" || checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "turtle", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
     }
@@ -380,15 +391,20 @@
     // -- format2: this is the other field from the chosen form
     // -- tab: this is the tab the user choses to use
     function catchError(condition, rdfFunction, value, format, format2, tab){
+        console.log(value);
     	if(condition){
             // try catch method to intercept an error
     		try{
     			convertFormat(rdfFunction, value, format, format2, tab);
     		}catch(error){
-    			alert.text("The format you inserted is not the same as the selected format.");
-                $(format).css("border", "1px solid #D75452");
-                $(format2).css("border", "1px solid #CCC");
-				$(tab).prepend(alert);
+                if($(format).val() == "rdfxml" && value.substring(0,5) == "<?xml"){
+                    showAlert("The format you inserted is correct, but your RDF:XML syntax is wrong.", format, format2, tab);
+                }else if($(format).val() == "jsonld" && value.substring(0,1) == "{" && value.slice(-1) == "}"){
+                    showAlert("The format you inserted is correct, but your JSON-LD syntax is wrong.", format, format2, tab);
+                }else{
+                    showAlert("The format you inserted is not the same as the selected format.", format, format2, tab);
+                }
+                $(".spinner").css("display", "none");
     		}   
         }
     }
@@ -410,17 +426,24 @@
                     $(".spinner").css("display", "block");
                     // This variable contains the returned array which has all the errors and warnings in it
                     // The filevalue contains the feed itself as Turtle and the afterValidate function is a callback
-
-	                feedback = validate(fileValue, afterValidate);
+	                feedback = validate(fileValue, validatorRules, afterValidate);
 	            });  
 	    	}catch(error){
-	    		alert.text("The format you inserted is not the same as the selected format.");
-                $(format).css("border", "1px solid #D75452");
-                $(format2).css("border", "1px solid #CCC");
-				$(tab).prepend(alert);
+                if($(format).val() == "turtle" && fileValue.substring(0,7) == "@prefix"){
+                    showAlert("The format you inserted is correct, but your Turtle syntax is wrong.", format, format2, tab);
+                }else{
+                    showAlert("The format you inserted is not the same as the selected format.", format, format2, tab);
+                }
                 $(".spinner").css("display", "none");
 	    	}
     	});
+    }
+
+    function showAlert(message, element1, element2, tab){
+        alert.text(message);
+        $(element1).css("border", "1px solid #D75452");
+        $(element2).css("border", "1px solid #CCC");
+        $(tab).prepend(alert);
     }
 
     // After the library has validated the feed, this function is called and creates different alerts for warnings, errors and successfull validations
@@ -590,8 +613,943 @@
             });
         });
     }
+    
 
-     init();
+    // ==========================================================================================
+    // ============================== HARD CODED VALIDATION RULES ===============================
+    // ==========================================================================================
+
+    //the hard-coded validation rules of DCAT
+    var validatorRules = new Array();
+
+    //The class where it all begins: 'Catalog' (mandatory)
+    validatorRules['mandatory'] =
+    {
+        'Catalog': {
+            'class': 'Catalog',
+            'required': 'mandatory',
+            'mutiple': false,
+            'URI': 'http://www.w3.org/ns/dcat#Catalog',
+            'properties': [ 
+                {
+                    'name': 'type',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Resource',
+                    'URI': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+                    'multiple': false
+                },
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'multiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'multiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'multiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'multiple': false
+                },
+                {
+                    'name': 'language',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/language',
+                    'multiple': false
+                },
+                {
+                    'name': 'publisher',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'http://xmlns.com/foaf/0.1/Agent',
+                    'URI': 'http://purl.org/dc/terms/publisher',
+                    'multiple': false
+                },
+                {
+                    'name': 'themes',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
+                    'URI': 'http://purl.org/dc/terms/themeTaxonomy',
+                    'multiple': false
+                },
+                {
+                    'name': 'license',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/license',
+                    'multiple': false
+                },
+                {
+                    'name': 'rigths',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/rights',
+                    'multiple': false
+                },
+                {
+                    'name': 'spatial',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/spatial',
+                    'multiple': false
+                },
+                {
+                    'name': 'dataset',
+                    'prefix': 'dcat',
+                    'required': 'mandatory',
+                    'Range': 'http://www.w3.org/ns/dcat#Dataset',
+                    'URI': 'http://www.w3.org/ns/dcat#dataset',
+                    'multiple': true
+                },
+                {
+                    'name': 'record',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#record',
+                    'multiple': false
+                },
+                {
+                    'name': 'homepage',
+                    'prefix': 'foaf',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://xmlns.com/foaf/0.1/homepage',
+                    'multiple': false
+                }
+            ]
+        }
+    };
+
+    //The classes that can be in the DCAT feed (optional)
+    validatorRules['optional'] =
+    {
+        'Agent': {
+            'class': 'Agent',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://xmlns.com/foaf/0.1/Agent',
+            'properties': [
+                {
+                    'name': 'name',
+                    'prefix': 'foaf',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://xmlns.com/foaf/0.1/name',
+                    'multiple': true
+                }
+            ]
+        },
+        'Dataset': {
+            'class': 'Dataset',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/ns/dcat#Dataset',
+            'properties': [
+                {
+                    'name': 'type',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
+                    'URI': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+                    'multiple': false
+                },
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'multiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'multiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'multiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'multiple': false
+                },
+                {
+                    'name': 'language',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/language',
+                    'multiple': false
+                },
+                {
+                    'name': 'publisher',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'http://xmlns.com/foaf/0.1/Agent',
+                    'URI': 'http://purl.org/dc/terms/publisher',
+                    'multiple': false
+                },
+                {
+                    'name': 'accrualPeriodicity',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/publisher',
+                    'multiple': false
+                },
+                {
+                    'name': 'identifier',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/identifier',
+                    'multiple': false
+                },
+                {
+                    'name': 'temporal',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/temporal',
+                    'multiple': false
+                },
+                {
+                    'name': 'theme',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
+                    'URI': 'http://www.w3.org/ns/dcat#theme',
+                    'multiple': false
+                },
+                {
+                    'name': 'relation',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Resource',
+                    'URI': 'http://purl.org/dc/terms/relation',
+                    'multiple': false
+                },
+                {
+                    'name': 'keyword',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Literal',
+                    'URI': 'http://www.w3.org/ns/dcat#keyword',
+                    'multiple': true
+                },
+                {
+                    'name': 'contactPoint',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#contactPoint',
+                    'multiple': false
+                },
+                {
+                    'name': 'temporal',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/temporal',
+                    'multiple': false
+                },
+                {
+                    'name': 'spatial',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/spatial',
+                    'multiple': false
+                },
+                {
+                    'name': 'sample',
+                    'prefix': 'adms',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/adms#sample',
+                    'multiple': false
+                },
+                {
+                    'name': 'distribution',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#distribution',
+                    'multiple': false
+                },
+                {
+                    'name': 'landingPage',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#landingPage',
+                    'multiple': false
+                }
+            ]
+        },
+        'Distribution': {
+            'class': 'Distribution',
+            'required': 'recommended',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/ns/dcat#Distribution',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'mutiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'mutiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'mutiple': false
+                },
+                {
+                    'name': 'language',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/language',
+                    'mutiple': false
+                },
+                {
+                    'name': 'license',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/license',
+                    'mutiple': false
+                },
+                {
+                    'name': 'rigths',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/rights',
+                    'mutiple': false
+                },
+                {
+                    'name': 'accessURL',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Resource',
+                    'URI': 'http://www.w3.org/ns/dcat#accessURL',
+                    'mutiple': false
+                },
+                {
+                    'name': 'downloadURL',
+                    'prefix': 'dcat',
+                    'required': 'mandatory',
+                    'Range': 'Resource',
+                    'URI': 'http://www.w3.org/ns/dcat#downloadURL',
+                    'mutiple': false
+                },
+                {
+                    'name': 'mediaType',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#mediaType',
+                    'mutiple': false
+                },
+                {
+                    'name': 'format',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/format',
+                    'mutiple': false
+                },
+                {
+                    'name': 'byteSize',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Decimal',
+                    'URI': 'http://www.w3.org/ns/dcat#byteSize',
+                    'mutiple': false
+                }
+            ]
+        },
+        'Concept': {
+            'class': 'Concept',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/2004/02/skos/core#Concept',
+            'properties': [
+                {
+                    'name': 'prefLabel',
+                    'prefix': 'skos',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://www.w3.org/2004/02/skos/core#prefLabel',
+                    'mutiple': false
+                }
+            ]
+        },
+        'ConceptScheme': {
+            'class': 'ConceptScheme',
+            'required': 'mandatory',
+            'mutiple': false,
+            'URI': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                }
+            ]
+        },
+        'CatalogRecord': {
+            'class': 'CatalogRecord',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://www.w3.org/ns/dcat#CatalogRecord',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'mutiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'mutiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'mutiple': false
+                },
+                {
+                    'name': 'primaryTopic',
+                    'prefix': 'foaf',
+                    'required': 'mandatory',
+                    'Range': 'http://www.w3.org/ns/dcat#Dataset',
+                    'URI': 'http://xmlns.com/foaf/0.1/primaryTopic',
+                    'mutiple': false
+                }
+            ]
+        },
+        'LinguisticSystem': {
+            'class': 'LinguisticSystem',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/LinguisticSystem',
+            'properties': [
+
+            ]
+        },
+        'LicenseDocument': {
+            'class': 'LicenseDocument',
+            'required': 'recommended',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/LicenseDocument',
+            'properties': [
+
+            ]
+        },
+        'Frequency': {
+            'class': 'Frequency',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/Frequency',
+            'properties': [
+
+            ]
+        },
+        'Document': {
+            'class': 'Document',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://xmlns.com/foaf/0.1/Document',
+            'properties': [
+
+            ]
+        }
+    };
+
+    //The classes that can be in the DCAT feed (optional)
+    validatorRules['optional'] =
+    {
+        'Agent': {
+            'class': 'Agent',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://xmlns.com/foaf/0.1/Agent',
+            'properties': [
+                {
+                    'name': 'name',
+                    'prefix': 'foaf',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://xmlns.com/foaf/0.1/name',
+                    'multiple': true
+                }
+            ]
+        },
+        'Dataset': {
+            'class': 'Dataset',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/ns/dcat#Dataset',
+            'properties': [
+                {
+                    'name': 'type',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
+                    'URI': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+                    'multiple': false
+                },
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'multiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'multiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'multiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'multiple': false
+                },
+                {
+                    'name': 'language',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/language',
+                    'multiple': false
+                },
+                {
+                    'name': 'publisher',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'http://xmlns.com/foaf/0.1/Agent',
+                    'URI': 'http://purl.org/dc/terms/publisher',
+                    'multiple': false
+                },
+                {
+                    'name': 'accrualPeriodicity',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/publisher',
+                    'multiple': false
+                },
+                {
+                    'name': 'identifier',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/identifier',
+                    'multiple': false
+                },
+                {
+                    'name': 'temporal',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/temporal',
+                    'multiple': false
+                },
+                {
+                    'name': 'theme',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'http://www.w3.org/2004/02/skos/core#Concept',
+                    'URI': 'http://www.w3.org/ns/dcat#theme',
+                    'multiple': false
+                },
+                {
+                    'name': 'relation',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Resource',
+                    'URI': 'http://purl.org/dc/terms/relation',
+                    'multiple': false
+                },
+                {
+                    'name': 'keyword',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Literal',
+                    'URI': 'http://www.w3.org/ns/dcat#keyword',
+                    'multiple': true
+                },
+                {
+                    'name': 'contactPoint',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#contactPoint',
+                    'multiple': false
+                },
+                {
+                    'name': 'temporal',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/temporal',
+                    'multiple': false
+                },
+                {
+                    'name': 'spatial',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/spatial',
+                    'multiple': false
+                },
+                {
+                    'name': 'sample',
+                    'prefix': 'adms',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/adms#sample',
+                    'multiple': false
+                },
+                {
+                    'name': 'distribution',
+                    'prefix': 'dcat',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#distribution',
+                    'multiple': false
+                },
+                {
+                    'name': 'landingPage',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#landingPage',
+                    'multiple': false
+                }
+            ]
+        },
+        'Distribution': {
+            'class': 'Distribution',
+            'required': 'recommended',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/ns/dcat#Distribution',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'mutiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'mutiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'mutiple': false
+                },
+                {
+                    'name': 'language',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/language',
+                    'mutiple': false
+                },
+                {
+                    'name': 'license',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/license',
+                    'mutiple': false
+                },
+                {
+                    'name': 'rigths',
+                    'prefix': 'dct',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/rights',
+                    'mutiple': false
+                },
+                {
+                    'name': 'accessURL',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Resource',
+                    'URI': 'http://www.w3.org/ns/dcat#accessURL',
+                    'mutiple': false
+                },
+                {
+                    'name': 'downloadURL',
+                    'prefix': 'dcat',
+                    'required': 'mandatory',
+                    'Range': 'Resource',
+                    'URI': 'http://www.w3.org/ns/dcat#downloadURL',
+                    'mutiple': false
+                },
+                {
+                    'name': 'mediaType',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Anything',
+                    'URI': 'http://www.w3.org/ns/dcat#mediaType',
+                    'mutiple': false
+                },
+                {
+                    'name': 'format',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'Anything',
+                    'URI': 'http://purl.org/dc/terms/format',
+                    'mutiple': false
+                },
+                {
+                    'name': 'byteSize',
+                    'prefix': 'dcat',
+                    'required': 'optional',
+                    'Range': 'Decimal',
+                    'URI': 'http://www.w3.org/ns/dcat#byteSize',
+                    'mutiple': false
+                }
+            ]
+        },
+        'Concept': {
+            'class': 'Concept',
+            'required': 'mandatory',
+            'mutiple': true,
+            'URI': 'http://www.w3.org/2004/02/skos/core#Concept',
+            'properties': [
+                {
+                    'name': 'prefLabel',
+                    'prefix': 'skos',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://www.w3.org/2004/02/skos/core#prefLabel',
+                    'mutiple': false
+                }
+            ]
+        },
+        'ConceptScheme': {
+            'class': 'ConceptScheme',
+            'required': 'mandatory',
+            'mutiple': false,
+            'URI': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                }
+            ]
+        },
+        'CatalogRecord': {
+            'class': 'CatalogRecord',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://www.w3.org/ns/dcat#CatalogRecord',
+            'properties': [
+                {
+                    'name': 'title',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/title',
+                    'mutiple': false
+                },
+                {
+                    'name': 'description',
+                    'prefix': 'dct',
+                    'required': 'mandatory',
+                    'Range': 'Literal',
+                    'URI': 'http://purl.org/dc/terms/description',
+                    'mutiple': false
+                },
+                {
+                    'name': 'issued',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/issued',
+                    'mutiple': false
+                },
+                {
+                    'name': 'modified',
+                    'prefix': 'dct',
+                    'required': 'recommended',
+                    'Range': 'DateTime',
+                    'URI': 'http://purl.org/dc/terms/modified',
+                    'mutiple': false
+                },
+                {
+                    'name': 'primaryTopic',
+                    'prefix': 'foaf',
+                    'required': 'mandatory',
+                    'Range': 'http://www.w3.org/ns/dcat#Dataset',
+                    'URI': 'http://xmlns.com/foaf/0.1/primaryTopic',
+                    'mutiple': false
+                }
+            ]
+        },
+        'LinguisticSystem': {
+            'class': 'LinguisticSystem',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/LinguisticSystem',
+            'properties': [
+
+            ]
+        },
+        'LicenseDocument': {
+            'class': 'LicenseDocument',
+            'required': 'recommended',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/LicenseDocument',
+            'properties': [
+
+            ]
+        },
+        'Frequency': {
+            'class': 'Frequency',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://purl.org/dc/terms/Frequency',
+            'properties': [
+
+            ]
+        },
+        'Document': {
+            'class': 'Document',
+            'required': 'optional',
+            'mutiple': false,
+            'URI': 'http://xmlns.com/foaf/0.1/Document',
+            'properties': [
+
+            ]
+        }
+    };
+
+    init();
 
 })();
 
