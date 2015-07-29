@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 /*!
@@ -6847,16 +6847,11 @@ Object.keys(exports).forEach(function (submodule) {
   });
 });
 
-},{"./lib/N3Lexer":25,"./lib/N3Parser":26,"./lib/N3Store":27,"./lib/N3StreamParser":28,"./lib/N3StreamWriter":29,"./lib/N3Util":30,"./lib/N3Writer":31}],33:[function(require,module,exports){
+},{"./lib/N3Lexer":25,"./lib/N3Parser":26,"./lib/N3Store":27,"./lib/N3StreamParser":28,"./lib/N3StreamWriter":29,"./lib/N3Util":30,"./lib/N3Writer":31}],"validate":[function(require,module,exports){
 (function (global){
 //Include all the n3 libraries Ruben Verborgh made
 var N3 = require('./node_modules/n3/n3');
 require('./node_modules/n3/n3').Util(global);
-
-//This line makes sure that the validate function can be used in different js file
-if(typeof window !== 'undefined') {
-    window.validate = validate;
-}
 
 //variable that can store all the triplets of the rdf file
 var store;
@@ -6874,7 +6869,7 @@ var feedback;
 var checkedClasses = [];
 
 //The validation function with a callback to start the code after this function is done
-function validate(dcat, rules, callback) {
+var validate = function(dcat, rules, callback) {
 
     //Initialize store, N3Util and validatorRules
     store = N3.Store();
@@ -6909,41 +6904,12 @@ function validate(dcat, rules, callback) {
                     }
                 } else if(classes.length === 0) {
 
-                    //Check if the specific array already exists
-                    if(feedback['errors']['Catalog '] == undefined) {
-
-                        feedback['errors']['Catalog '] = {
-                            'class': 'Catalog',
-                            'URIClass': null,
-                            'error': []
-                        };
-                    }
-
-                    //Push all the information about the error into the array
-                    feedback['errors']['Catalog '].error.push({
-                        'message': 'is mandatory',
-                        'property': null,
-                        'URIProperty': null,
-                        'valueProperty': null
-                    });
+                    //Add an error
+                    addFeedbackNoURI('Catalog ', 'is mandatory');
                 } else {
 
-                    //Check if the specific array already exists
-                    if(feedback['errors']['Catalog '] == undefined) {
-                        feedback['errors']['Catalog '] = {
-                            'class': 'Catalog',
-                            'URIClass': null,
-                            'error': []
-                        };
-                    }
-
-                    //Push all the information about the error into the array
-                    feedback['errors']['Catalog '].error.push({
-                        'message': 'mutiple',
-                        'property': null,
-                        'URIProperty': null,
-                        'valueProperty': null
-                    });
+                    //Add an error
+                    addFeedbackNoURI('Catalog ', 'mutiple');
                 }
             }
            
@@ -6978,23 +6944,9 @@ var validateClass = function(className, URI) {
 
             //Check if their are multiple objects found and if it is allowed, if not put an error
             if(foundObjects.length > 1 && !jsonClass.properties[property].multiple) {
-                
-                //Check if the specific array already exists
-                if(feedback['errors'][className + ' ' + URI] == undefined) {
-                    feedback['errors'][className + ' ' + URI] = {
-                        'class': className,
-                        'URIClass': URI,
-                        'error': []
-                    };
-                }
 
-                //Push all the information about the error into the array
-                feedback['errors'][className + ' ' + URI].error.push({
-                    'message': 'can\'t have multiple objects',
-                    'property': jsonClass.properties[property].name,
-                    'URIProperty': jsonClass.properties[property].URI,
-                    'valueProperty': null
-                });
+                //add an error
+                addFeedback('errors', className, URI, 'can\'t have multiple objects', jsonClass.properties[property].name, jsonClass.properties[property].URI, null);
             } else {
 
                 //Loop through the found objects and validate them
@@ -7004,22 +6956,8 @@ var validateClass = function(className, URI) {
                     if(jsonClass.properties[property].Range == 'Literal') {
                         if(!N3Util.isLiteral(foundObjects[foundObject].object)) {
 
-                            //Check if the specific array already exists
-                            if(feedback['errors'][className + ' ' + URI] == undefined) {
-                                feedback['errors'][className + ' ' + URI] = {
-                                    'class': className,
-                                    'URIClass': URI,
-                                    'error': []
-                                };
-                            }
-
-                            //Push all the information about the error into the array
-                            feedback['errors'][className + ' ' + URI].error.push({
-                                'message': 'needs to be a Literal',
-                                'property': jsonClass.properties[property].name,
-                                'URIProperty': jsonClass.properties[property].URI,
-                                'valueProperty': foundObjects[foundObject].object
-                            });
+                            //add an error
+                            addFeedback('errors', className, URI, 'needs to be a Literal', jsonClass.properties[property].name, jsonClass.properties[property].URI, foundObjects[foundObject].object);
                         }
 
                     //Check datetime literals    
@@ -7038,22 +6976,8 @@ var validateClass = function(className, URI) {
                         //If the object isn't a literal or the date isn't valid put an error
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || !isDate) {
 
-                            //Check if the specific array already exists
-                            if(feedback['errors'][className + ' ' + URI] == undefined) {
-                                feedback['errors'][className + ' ' + URI] = {
-                                    'class': className,
-                                    'URIClass': URI,
-                                    'error': []
-                                };
-                            }
-
-                            //Push all the information about the error into the array
-                            feedback['errors'][className + ' ' + URI].error.push({
-                                'message': 'needs to be a correct ISO 8601 date',
-                                'property': jsonClass.properties[property].name,
-                                'URIProperty': jsonClass.properties[property].URI,
-                                'valueProperty': foundObjects[foundObject].object
-                            });
+                            //add an error
+                            addFeedback('errors', className, URI, 'needs to be a correct ISO 8601 date', jsonClass.properties[property].name, jsonClass.properties[property].URI, foundObjects[foundObject].object);
                         }
 
                     //Check decimal literals
@@ -7064,22 +6988,8 @@ var validateClass = function(className, URI) {
 
                         if(!N3Util.isLiteral(foundObjects[foundObject].object) || isNaN(decimal)) {
 
-                            //Check if the specific array already exists
-                            if(feedback['errors'][className + ' ' + URI] == undefined) {
-                                feedback['errors'][className + ' ' + URI] = {
-                                    'class': className,
-                                    'URIClass': URI,
-                                    'error': []
-                                };
-                            }
-
-                            //Push all the information about the error into the array
-                            feedback['errors'][className + ' ' + URI].error.push({
-                                'message': 'needs to be a number',
-                                'property': jsonClass.properties[property].name,
-                                'URIProperty': jsonClass.properties[property].URI,
-                                'valueProperty': foundObjects[foundObject].object
-                            });
+                            //add an error
+                            addFeedback('errors', className, URI, 'needs to be a number', jsonClass.properties[property].name, jsonClass.properties[property].URI, foundObjects[foundObject].object);
                         }
 
                     //Check URI's
@@ -7088,23 +6998,9 @@ var validateClass = function(className, URI) {
                         //check if the found object is a URI and if it may be a literal if it doesn't put an error
                         if(!N3Util.isIRI(foundObjects[foundObject].object)) {
                             if(jsonClass.properties[property].Range != 'Anything') {
-                            
-                                //Check if the specific array already exists
-                                if(feedback['errors'][className + ' ' + URI] == undefined) {
-                                    feedback['errors'][className + ' ' + URI] = {
-                                        'class': className,
-                                        'URIClass': URI,
-                                        'error': []
-                                    };
-                                }
 
-                                //Push all the information about the error into the array
-                                feedback['errors'][className + ' ' + URI].error.push({
-                                    'message': 'needs to be a URI',
-                                    'property': jsonClass.properties[property].name,
-                                    'URIProperty': jsonClass.properties[property].URI,
-                                    'valueProperty': foundObjects[foundObject].object
-                                });
+                                //add an error
+                                addFeedback('errors', className, URI, 'needs to be a URI', jsonClass.properties[property].name, jsonClass.properties[property].URI, foundObjects[foundObject].object);
                             }
                         } else {
 
@@ -7152,40 +7048,12 @@ var validateClass = function(className, URI) {
                                     //Check if the uninitializedClassName is found
                                     if(uninitializedClassName != '') {
 
-                                        //Check if the specific array already exists
-                                        if(feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object] == undefined) {
-                                            feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object] = {
-                                                'class': uninitializedClassName,
-                                                'URIClass': foundObjects[foundObject].object,
-                                                'error': []
-                                            };
-                                        }
-
-                                        //Push all the information about the error into the array
-                                        feedback['errors'][uninitializedClassName + ' ' + foundObjects[foundObject].object].error.push({
-                                            'message': 'needs to be initialized',
-                                            'property': null,
-                                            'URIProperty': null,
-                                            'valueProperty': null
-                                        });
+                                        //add an error
+                                        addFeedback('errors', uninitializedClassName, foundObjects[foundObject].object, 'needs to be initialized', null, null, null);
                                     } else {
 
-                                        //Check if the specific array already exists
-                                        if(feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object] == undefined) {
-                                            feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object] = {
-                                                'class': jsonClass.properties[property].Range,
-                                                'URIClass': foundObjects[foundObject].object,
-                                                'error': []
-                                            };
-                                        }
-
-                                        //Push all the information about the error into the array
-                                        feedback['errors'][jsonClass.properties[property].Range + ' ' + foundObjects[foundObject].object].error.push({
-                                                'message': 'needs to be initialized',
-                                                'property': null,
-                                                'URIProperty': null,
-                                                'valueProperty': null
-                                        });
+                                        //add an error
+                                        addFeedback('errors', jsonClass.properties[property].Range, foundObjects[foundObject].object, 'needs to be initialized', null, null, null);
                                     }
                                 }
                             }
@@ -7201,41 +7069,14 @@ var validateClass = function(className, URI) {
                 //If the property is mandatory put an error in the array            
                 if(jsonClass.properties[property].required == 'mandatory') {
 
-                    //Check if the specific array already exists
-                    if(feedback['errors'][className + ' ' + URI] == undefined) {
-                        feedback['errors'][className + ' ' + URI] = {
-                            'class': className,
-                            'URIClass': URI,
-                            'error': []
-                        };
-                    }
+                    //add an error
+                    addFeedback('errors', className, URI, 'is mandatory', jsonClass.properties[property].name, jsonClass.properties[property].URI, null);
 
-                    //Push all the information about the error into the array
-                    feedback['errors'][className + ' ' + URI].error.push({
-                        'message': 'is mandatory',
-                        'property': jsonClass.properties[property].name,
-                        'URIProperty': jsonClass.properties[property].URI,
-                        'valueProperty': null
-                    });
                 //If the property is recommended put a warning in the array  
                 } else if(jsonClass.properties[property].required == 'recommended') {
 
-                    //Check if the specific array already exists
-                    if(feedback['warnings'][className + ' ' + URI] == undefined) {
-                        feedback['warnings'][className + ' ' + URI] = {
-                            'class': className,
-                            'URIClass': URI,
-                            'error': []
-                        };
-                    }
-
-                    //Push all the information about the error into the array
-                    feedback['warnings'][className + ' ' + URI].error.push({
-                        'message': 'is recommended',
-                        'property': jsonClass.properties[property].name,
-                        'URIProperty': jsonClass.properties[property].URI,
-                        'valueProperty': null
-                    });
+                    //add an error
+                    addFeedback('warnings', className, URI, 'is recommended', jsonClass.properties[property].name, jsonClass.properties[property].URI, null);
                 }
             }
         }
@@ -7256,5 +7097,58 @@ var isClassChecked = function(className, URI) {
 
     return checked;
 };
+
+//Method that adds feedback to the feedback array
+var addFeedback = function(feedbackType, className, URI, message, property, URIProperty, valueProperty) {
+
+    //Check if the specific array already exists
+    if(feedback[feedbackType][className + ' ' + URI] == undefined) {
+        feedback[feedbackType][className + ' ' + URI] = {
+            'class': className,
+            'URIClass': URI,
+            'error': []
+        };
+    }
+
+    //Push all the information about the error into the array
+    feedback[feedbackType][className + ' ' + URI].error.push({
+        'message': message,
+        'property': property,
+        'URIProperty': URIProperty,
+        'valueProperty': valueProperty
+    });
+};
+
+//Method that adds feedback to the feedback array that isn't implemented yet
+//That's why there is no error and the feedback type always is an error
+var addFeedbackNoURI = function(className, message) {
+
+    //Creating the new object
+    feedback['errors'][className + ' '] = {
+        'class': className,
+        'URIClass': null,
+        'error': []
+    };
+
+    //Push all the information about the error into the array
+    feedback['errors'][className + ' '].error.push({
+        'message': message,
+        'property': null,
+        'URIProperty': null,
+        'valueProperty': null
+    });
+};
+
+//This line makes sure that the validate function can be used in different js file
+if ( typeof define === 'function' && define.amd ) {
+  // AMD
+  define(validate);
+} else if (typeof exports === 'object' ) {
+  // CommonJS
+  module.exports = validate;
+} else {
+  // browser global
+  window.validate = validate;
+}
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./node_modules/n3/n3":32}]},{},[33]);
+},{"./node_modules/n3/n3":32}]},{},[]);

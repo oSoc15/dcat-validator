@@ -17,6 +17,9 @@
     var jsonldPatt = /^\s*\{[\s\S]*.*[\s\S]*\}\s*$/m;
     var turtlePatt = /^\s*\@prefix/i;
 
+    // require the validate module
+    var validate = require('validate');
+
     // init function that executes all functions and 
     // gets called at the bottom of the javascript file once all the functions are known
 	function init(){
@@ -730,7 +733,7 @@
                 },
                 {
                     'name': 'themes',
-                    'prefix': 'dcat',
+                    'prefix': 'dct',
                     'required': 'recommended',
                     'Range': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
                     'URI': 'http://purl.org/dc/terms/themeTaxonomy',
@@ -923,7 +926,7 @@
                     'required': 'recommended',
                     'Range': 'Anything',
                     'URI': 'http://www.w3.org/ns/dcat#contactPoint',
-                    'multiple': false
+                    'multiple': true
                 },
                 {
                     'name': 'temporal',
