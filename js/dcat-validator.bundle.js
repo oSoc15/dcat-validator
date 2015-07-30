@@ -7139,7 +7139,7 @@ var addFeedbackNoURI = function(className, message) {
     });
 };
 
-//This line makes sure that the validate function can be used in different js file
+//This block makes sure that the validate function can be used in different js file
 if ( typeof define === 'function' && define.amd ) {
   // AMD
   define(validate);
