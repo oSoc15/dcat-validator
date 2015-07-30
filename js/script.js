@@ -180,6 +180,10 @@
                         showAlert("The URI you inserted does not contain one of the formats we support. Please insert a XML, JSON-LD or Turtle format.", ".tab1Input", ".formatSelectTab1", "#tab1");
                     }
                 }
+                // ,error:function(){
+                    
+                // },
+                // timeout:8000
             });
         }
     }
@@ -338,29 +342,23 @@
 
     // This function executes the catchError function which determines which parser is executed to serialize everything to turtle
     function selectParserTab3(text){
-        //////////////////// for firefox only /////////////////////
-        // For firefox only because it has trouble parsing the XML and serializing it to Turtle, a DOMParser instance is created
-        var oParser = new DOMParser();
-        // parse the xml
-        var oDOM = oParser.parseFromString($(".tab3Textarea").val(), "text/xml");
-        // this variable contains the right format or an error, the variable contains rdf:RDF if an RDF:XML is inserted in the direct input field
-        var checkFormat = oDOM.documentElement.nodeName == "parsererror" ? "error while parsing" : oDOM.documentElement.nodeName;
-        // if the checkFormat contains an error and it's not equal to rdf:RDF, an error is shown
-        if(checkFormat == "error while parsing"){
-            if(checkFormat != "rdf:RDF"){
-                showAlert("The format you inserted is not the same as the selected format.", ".formatTab3", ".tab3Textarea", "#tab3");
-            }
+        /////////////////////// FIREFOX ONLY ///////////////////////
+        // In firefox it validates RDF no matter what format is selected, to fix this an Reg. Exp. is used to see 
+        // if it is an xml file instead of turtle or JSON-LD which will show the errow in the else structure
+        if($(".formatTab3").val() == "rdfxml" && xmlPatt.test(text)){
+            catchError($(".formatTab3").val() == "rdfxml", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
+        }else{
+            showAlert("The format you inserted is not the same as the selected format.", ".formatTab3", ".tab3Textarea", "#tab3");
         }
-        //////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////
         
         // the catchError function is called which selects the right parser and then serializes to Turtle
-	    catchError($(".formatTab3").val() == "rdfxml" || checkFormat == "rdf:RDF", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "jsonld", rdf.parseJsonLd, text, ".formatTab3", ".tab3Textarea", "#tab3");
 	    catchError($(".formatTab3").val() == "turtle", rdf.parseTurtle, text, ".formatTab3", ".tab3Textarea", "#tab3");
     }
 
     // ==========================================================================================
-    // ============================== GENERAL FUNCTIONS VALIDATE ================================
+    // ============================== GENERAL VALIDATE FUNCTIONS ================================
     // ==========================================================================================
 
     // Function that checks if a field has a value or not. If it has a value the field get a normal border. 
@@ -501,6 +499,34 @@
         elementContainer.insertAfter($(".startContent"));
     }
 
+    // Show the content of the feedback, this contains the different errors or warnings
+    // This function calls the function showErrorWarning to show each error or warning seperatly
+    // arguments:
+    // -- classSpan: the name given to the class of the span element which defines all drop down button
+    // -- headerText: The text shown in the header
+    // -- container: the container in which all the errors or warnings is stored
+    // -- type: the type which is given to the showErrorWarning function, which deteremins wether it is an error or warning
+    // -- glyph: the glyph which is given to the showErrorWarning function, which is the type of glyph (boostrap) that has to be shown next to the warning or error
+    function showFeedbackContent(classSpan, headerText, container, type, glyph){
+        var fullContainer = $("<div>", {class:"headContainer"});
+        var headerContainer1 = $("<div>", {class:"col-sm-6"});
+        var headerContainer2 = $("<div>", {class:"col-sm-6 detailBtnContainer"});
+        var header = $("<h2>");
+        var spanDetailsErrors = $("<span>", {class:"allDetails" + classSpan});
+        header.text(headerText);
+        spanDetailsErrors.text("Show all " + classSpan.toLowerCase());
+        headerContainer1.append(header);
+        headerContainer2.append(spanDetailsErrors);
+        fullContainer.append(headerContainer1);
+        fullContainer.append(headerContainer2);
+        container.append(fullContainer);
+
+        // call the function showErrorWarning to show all the errors and warnings
+        showErrorWarning(type, container, glyph);
+
+        container.insertAfter(elementContainer);
+    }
+
     // This function shows the error or warning message. The function contains the entire setup to create
     // an expandable warning or error message with its different properties
     // arguments:
@@ -589,24 +615,12 @@
 
         // Show the different warnings
         if(fWarnings != 0){
-            var header2 = $("<h2>");
-            header2.text("Warnings");
-            warningsContainer.append(header2);
-            
-            showErrorWarning("warnings", warningsContainer, "warning");
-
-            warningsContainer.insertAfter(elementContainer);
+            showFeedbackContent("Warnings", "Warnings", warningsContainer, "warnings", "warning");
         }
 
         // Show the different errors
-        if(fErrors != 0){         
-            var header = $("<h2>");
-            header.text("Errors");
-            errorsContainer.append(header);
-
-            showErrorWarning("errors", errorsContainer, "remove");
-
-            errorsContainer.insertAfter(elementContainer);
+        if(fErrors != 0){
+            showFeedbackContent("Errors", "Errors", errorsContainer, "errors", "remove");
         }
 
         // Hide the different panel footers so that the properties are not shown when the validation is done
@@ -630,21 +644,31 @@
         if(showURIs){
             dropDown2(showURIs);
         }
+
+        // An eventlistener defined, using jQuery. When the span elements is clicked, the function dropDownAll is called
+        $(".allDetailsErrors").on("click", function(){
+            dropDownAll("errors", "Errors");
+        });
+        $(".allDetailsWarnings").on("click", function(){
+            dropDownAll("warnings", "Warnings");
+        });
     }
 
-    // Function that makes it possible to expand the errors and warnings to see there properties
+    // function that makes it possible to expand the errors and warnings to see there properties
+    // arguments:
+    // -- array: The array which contains the different elements for the panel-footer drop down
     function dropDown(array){
         [].forEach.call(array, function(btn){
             btn.addEventListener("click", function(event){
                 $(btn).parent('.panel').toggleClass('down');
                 var panelFootName = event.currentTarget.getAttribute('class').split(' ')[1];
-                var glyph = event.currentTarget.querySelector(".arrow")
                 $(".panel-footer-" + panelFootName).slideToggle("fast");
             });
         });
     }
 
-    // Function that meks it possible to show or hide the different URI's per property
+    // function that meks it possible to show or hide the different URI's per property
+    // -- array: the array which contains the different elements for the property URI drop down
     function dropDown2(array){
         [].forEach.call(array, function(btn){
             btn.addEventListener("click", function(event){
@@ -658,6 +682,32 @@
         });
     }
 
+    // function that expands all errors or warnings, depending on the type given as an argument
+    // arguments:
+    // -- type: defines the classname of the container which contains the panel-footer
+    // -- type2: defines the classname of the 'show/hide all details' button, also used to show the right text in the button
+    function dropDownAll(type, type2){
+        var array = $("." + type + " .panel");
+        var arrayFooters = $("." + type + " .panel-footer");
+        // if the span, depending on the type, has a text equal to 'show all details', then it executes a for lus
+        // which goes through the array and adds a class and a slideDown function using jQuery
+
+        console.log($(".allDetails" + type2).text());
+        if($(".allDetails" + type2).text() == "Show all " + type){
+            for(var i = 0; i < array.length; i++){
+                $(array[i]).addClass('down');
+                $(arrayFooters[i]).slideDown("fast");
+            }
+            $(".allDetails" + type2).text("Hide all " + type);
+        // else it removes the class down and add the function slideup using jQuery
+        }else{
+            for(var i = 0; i < array.length; i++){
+                $(array[i]).removeClass('down');
+                $(arrayFooters[i]).slideUp("fast");
+            }
+            $(".allDetails" + type2).text("Show all " + type);
+        }
+    }
 
     // ==========================================================================================
     // ============================== HARD CODED VALIDATION RULES ===============================

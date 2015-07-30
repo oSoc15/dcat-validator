@@ -203,6 +203,12 @@ div.container.warnings ul, div.container.errors ul{
   margin:0px;
 }
 
+.headContainer{
+  overflow:auto;
+  overflow-x:hidden;
+  overflow-y:hidden;
+}
+
 /* ------ SELECT BOX + DRAW ARROWS (support for safari and IE) ------ */
 .dblarrow, .dblarrow2{
   display: inline-block;
@@ -308,20 +314,30 @@ footer p{
   font-size:0.9em;
 }
 
-.showURI{
+.showURI, .allDetailsErrors, .allDetailsWarnings{
   float:right;
   color:#009688;
   font-size:0.9em;
   font-style:italic;
 }
 
+/* ------ DETAIL EXPANDABLE ------ */
 .showURIs{
   display:block !important;
 }
 
-.showURI:hover{
+.showURI:hover, .allDetailsErrors:hover, .allDetailsWarnings:hover{
   cursor:pointer;
   color:#00AB9B;
+}
+
+.allDetailsErrors, .allDetailsWarnings{
+  font-style:normal;
+  font-size:1.0em;
+}
+
+.detailBtnContainer{
+  margin:30px 0px 20px 0px;
 }
 
 /* --------------------------------- */
