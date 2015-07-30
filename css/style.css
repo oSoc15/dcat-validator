@@ -380,4 +380,12 @@ footer p{
     right:25px;
   }
 
+  /* ------ Details button ------ */
+  .detailBtnContainer{
+    margin-top:0px;
+  }
+  .allDetailsErrors, .allDetailsWarnings{
+    float:none;
+  }
+
 }
