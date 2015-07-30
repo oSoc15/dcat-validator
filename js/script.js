@@ -9,6 +9,11 @@
 // All the code is inside an anonymous function that calls itself so that
 // there will be no conflict with other javascript files when the same variable or function name is used 
 (function(){
+
+    $.ajaxSetup({
+        timeout: 30000
+    });
+
     // global variables
 	var feedback, text, alert, success, uploadFileValue, uploadError, url, list, elementContainer, expandBtns, panelFooters;
     var urlValue, urlFinal, number = 0, clicked = true;
@@ -180,10 +185,6 @@
                         showAlert("The URI you inserted does not contain one of the formats we support. Please insert a XML, JSON-LD or Turtle format.", ".tab1Input", ".formatSelectTab1", "#tab1");
                     }
                 }
-                // ,error:function(){
-                    
-                // },
-                // timeout:8000
             });
         }
     }
@@ -348,7 +349,9 @@
         if($(".formatTab3").val() == "rdfxml" && xmlPatt.test(text)){
             catchError($(".formatTab3").val() == "rdfxml", rdf.parseRdfXml, text, ".formatTab3", ".tab3Textarea", "#tab3");
         }else{
-            showAlert("The format you inserted is not the same as the selected format.", ".formatTab3", ".tab3Textarea", "#tab3");
+            if($(".formatTab3").val() == "rdfxml"){
+                showAlert("The format you inserted is not the same as the selected format.", ".formatTab3", ".tab3Textarea", "#tab3");
+            }
         }
         ////////////////////////////////////////////////////////////
         
@@ -783,10 +786,10 @@
                 },
                 {
                     'name': 'themes',
-                    'prefix': 'dct',
+                    'prefix': 'dcat',
                     'required': 'recommended',
                     'Range': 'http://www.w3.org/2004/02/skos/core#ConceptScheme',
-                    'URI': 'http://purl.org/dc/terms/themeTaxonomy',
+                    'URI': 'http://www.w3.org/ns/dcat#themeTaxonomy',
                     'multiple': false
                 },
                 {

@@ -49,15 +49,19 @@ a:hover{
 
 /* ------ NAVIGATION BUTTON (RESPONSIVE) ------ */
 body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button{
-    background-color:#009688;
+  background-color:#009688;
 }
 
 body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button:hover{
-    background-color:#00AB9B;
+  background-color:#00AB9B;
 }
 
 body > div.navbar.navbar-default.navbar-static-top.heading > div > div > button > span{
-    background-color:#FFF;
+  background-color:#FFF;
+}
+
+.navbar-collapse{
+  text-align:center;
 }
 
 /* ------ FOCUS INPUT FIELDS ------ */
