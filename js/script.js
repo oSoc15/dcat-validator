@@ -638,7 +638,7 @@
         // if the array contains these buttons call the dropdown function
         expandBtns = document.querySelectorAll(".panel-body");
         if(expandBtns){
-            dropDown(expandBtns);
+            dropDown(expandBtns, fErrors, fWarnings);
         }
 
         // Get all the showURI buttons and put them in an array
@@ -650,22 +650,35 @@
 
         // An eventlistener defined, using jQuery. When the span elements is clicked, the function dropDownAll is called
         $(".allDetailsErrors").on("click", function(){
-            dropDownAll("errors", "Errors");
+            dropDownAll("errors", "Errors", fErrors, fWarnings);
         });
         $(".allDetailsWarnings").on("click", function(){
-            dropDownAll("warnings", "Warnings");
+            dropDownAll("warnings", "Warnings", fErrors, fWarnings);
         });
     }
 
     // function that makes it possible to expand the errors and warnings to see there properties
     // arguments:
     // -- array: The array which contains the different elements for the panel-footer drop down
-    function dropDown(array){
+    function dropDown(array, length, length2){
         [].forEach.call(array, function(btn){
             btn.addEventListener("click", function(event){
                 $(btn).parent('.panel').toggleClass('down');
                 var panelFootName = event.currentTarget.getAttribute('class').split(' ')[1];
-                $(".panel-footer-" + panelFootName).slideToggle("fast");
+                var thisGlyph = $(btn).parent('.panel').find(".glyphicon-chevron-down");
+                // if the length is more than 150 errors or warnings, the animation slideToggle is replace by a show and hide function
+                // This is applied only because some windows users have trouble with the animation when more than 150 errors are shown
+                if(length < 150 && length2 < 150){
+                    thisGlyph.css({'transition' : 'transform 0.2s', '-moz-transition': 'transform 0.2s', '-o-transition': 'transform 0.2s', '-webkit-transition': 'transform 0.2s', '-ms-transition': 'transform 0.2s'});
+                    $(".panel-footer-" + panelFootName).slideToggle("fast");
+                }else{
+                    thisGlyph.css({'transition' : 'none', '-moz-transition': 'none', '-o-transition': 'none', '-webkit-transition': 'none', '-ms-transition': 'none'});
+                    if($(btn).parent(".panel").attr("class") == "panel panel-default down"){
+                        $(".panel-footer-" + panelFootName).show();
+                    }else{
+                        $(".panel-footer-" + panelFootName).hide();
+                    }
+                }
             });
         });
     }
@@ -689,24 +702,38 @@
     // arguments:
     // -- type: defines the classname of the container which contains the panel-footer
     // -- type2: defines the classname of the 'show/hide all details' button, also used to show the right text in the button
-    function dropDownAll(type, type2){
+    function dropDownAll(type, type2, length, length2){
         var array = $("." + type + " .panel");
         var arrayFooters = $("." + type + " .panel-footer");
         // if the span, depending on the type, has a text equal to 'show all details', then it executes a for lus
         // which goes through the array and adds a class and a slideDown function using jQuery
-
-        console.log($(".allDetails" + type2).text());
         if($(".allDetails" + type2).text() == "Show all " + type){
             for(var i = 0; i < array.length; i++){
                 $(array[i]).addClass('down');
-                $(arrayFooters[i]).slideDown("fast");
+                // if the length is more than 150 errors or warnings, the animation slideDown or slideUp is replace by a show and hide function
+                // This is applied only because some windows users have trouble with the animation when more than 150 errors are shown
+                if(length < 150 && length2 < 150){
+                    $(arrayFooters[i]).prev().find(".glyphicon-chevron-down").css({'transition' : 'transform 0.2s', '-moz-transition': 'transform 0.2s', '-o-transition': 'transform 0.2s', '-webkit-transition': 'transform 0.2s', '-ms-transition': 'transform 0.2s'});
+                    $(arrayFooters[i]).slideDown("fast");
+                }else{
+                    $(arrayFooters[i]).prev().find(".glyphicon-chevron-down").css({'transition' : 'none', '-moz-transition': 'none', '-o-transition': 'none', '-webkit-transition': 'none', '-ms-transition': 'none'});
+                    $(arrayFooters[i]).show();
+                }
             }
             $(".allDetails" + type2).text("Hide all " + type);
         // else it removes the class down and add the function slideup using jQuery
         }else{
             for(var i = 0; i < array.length; i++){
                 $(array[i]).removeClass('down');
-                $(arrayFooters[i]).slideUp("fast");
+                // if the length is more than 150 errors or warnings, the animation slideDown or slideUp is replace by a show and hide function
+                // This is applied only because some windows users have trouble with the animation when more than 150 errors are shown
+                if(length < 150 && length2 < 150){
+                    $(arrayFooters[i]).prev().find(".glyphicon-chevron-down").css({'transition' : 'transform 0.2s', '-moz-transition': 'transform 0.2s', '-o-transition': 'transform 0.2s', '-webkit-transition': 'transform 0.2s', '-ms-transition': 'transform 0.2s'});
+                    $(arrayFooters[i]).slideUp("fast");
+                }else{
+                    $(arrayFooters[i]).prev().find(".glyphicon-chevron-down").css({'transition' : 'none', '-moz-transition': 'none', '-o-transition': 'none', '-webkit-transition': 'none', '-ms-transition': 'none'});
+                    $(arrayFooters[i]).hide();
+                }
             }
             $(".allDetails" + type2).text("Show all " + type);
         }
