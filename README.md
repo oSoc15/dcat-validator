@@ -10,6 +10,21 @@ The final goal of this project is to make a DCAT - validator for DCAT feeds. It 
 
 In order to install the right node_modules like bootstrap, jQuery, ... using the package.json you must have npm installed. You can find all the npm tutorials on this site: https://docs.npmjs.com/
 
+## Usage
+
+If anyone wants to use the code remove the code below which contains the script for our Google Analytics and replace it by your own Google Analytics script
+```
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-65756494-1', 'auto');
+    ga('send', 'pageview');
+</script>
+```
+
 ## Installation
 
 1. In order to install the right packages you need node.js and npm
