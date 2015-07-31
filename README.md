@@ -12,7 +12,7 @@ In order to install the right node_modules like bootstrap, jQuery, ... using the
 
 ## Usage
 
-If anyone wants to use the code remove the code below which contains the script for our Google Analytics and replace it by your own Google Analytics script
+If anyone wants to use the code remove the code below in all the HTML which contains the script for our Google Analytics and replace it by your own Google Analytics script.
 ```
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
