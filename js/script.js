@@ -565,8 +565,10 @@
             // if the class doesn't have properties, extra info will be added to the main message
             if(feedback[type][message].error[0].property != null){
                 error.append("<strong>Resource: </strong>" + feedback[type][message].class + " class: " + feedback[type][message].URIClass);
-            }else{
+            }else if(feedback[type][message].error[0].URIClass != null){
                 error.append("<strong>Resource: </strong>" + feedback[type][message].class + " class: " + feedback[type][message].URIClass + " " + feedback[type][message].error[0].message);
+            }else {
+                error.append("<strong>Resource: </strong>" + feedback[type][message].class + " class " + feedback[type][message].error[0].message);
             }
             // if the class doesn't have properties then it doens't need to be expandable
             if(feedback[type][message].error[0].property != null){
