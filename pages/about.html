@@ -4,8 +4,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The meta tags for Google -->
+    <meta name="description" content="The about page of the DCAT validator. Here you can find information about the project: DCAT rules, oSoc15, Github, Authors, ...">
+    <meta name="keywords" content="About, DCAT validator, information, info, DCAT, Data Catalog Vocabulary, DCAT rules, oSoc15, Github, Authors, Stan Callewaert, S&eacute;bastien Henau">
+    <meta name="author" content="Stan Callewaert, S&eacute;bastien Henau">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>DCAT - validator</title>
+    <title>DCAT validator</title>
+    <link rel="Shortcut Icon" type="image/ico" href="../images/favicon/favicon.ico" />
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- Font - awesome -->
@@ -28,7 +33,7 @@
           </button>
           <!-- HEADING TITLE -->
           <a class="navbar-brand" href="../index.html">
-            <span class="navbar-name">DCAT - validator</span>
+            <span class="navbar-name">DCAT validator</span>
           </a>
         </div>
         <!-- NAVIGATION -->
@@ -55,8 +60,8 @@
             <p>By using DCAT, a computer will be able to do this. The data can be found by a computer if datasets on the internet are standardised. The only thing the researcher has to do is ask the computer fo find all datasets that contain information about beetles.</p>
           </div>
           <div class="articleDCAT">
-            <h2>About the validator</h2>
-            <p>This project is part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> Two students, Stan Callewaert and Sébastien Henau, who participated in open Summer of Code 2015, created this validator. It is funded by the <a href="http://www.flanders.be/en">Flemish government</a> and is part of a bigger project that consits of three subprojects of which this validator is one. The intention of this project is to make a validator for DCAT feeds. It shows errors or warnings of classes when respectively mandatory or required properties are missing. These errors and warnings are based on <a href="http://dcat.be/images/dcat-ap.png"> the rules</a> determined by a scheme. The validation can easily be done by manually inserting the feed, uploading a file or inserting a URI.</p>
+            <h2>About the DCAT validator</h2>
+            <p>This project is part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> Two students, <a href="https://github.com/StanCallewaert">Stan Callewaert</a> and <a href="https://github.com/sebastienhenau">Sébastien Henau</a>, who participated in open Summer of Code 2015, created this validator. It is funded by the <a href="http://www.flanders.be/en">Flemish government</a> and is part of a bigger project that consits of three subprojects of which this validator is one. The intention of this project is to make a validator for DCAT feeds. It shows errors or warnings of classes when respectively mandatory or required properties are missing. These errors and warnings are based on <a href="http://dcat.be/images/dcat-ap.png"> the rules</a> determined by a scheme. The validation can easily be done by manually inserting the feed, uploading a file or inserting a URI.</p>
             <p>The user can insert different formats. These formats are RDF:XML, JSON-LD and Turtle. The inserted format will be parsed and serialized to 'Turtle' so that it can be validated. Once the feed is validated the user will receive feedback whether his feed is valid or has errors or warnings. These errors and warnings can be expanded to find more information about its missing or wrong properties. The user can also insert a URI and select the default format 'Automatic' which will detect what format it is, based on the supported formats (Turtle, JSON-LD, RDF:XML), it will parse and serialize it automatically without the user selecting the format.</p>
             <hr>
             <p>Many organistions use datasets and try to standardise these by using DCAT. But it is very hard to find the right syntax because there is not much documentation about it. For example: if there is a missing class or property. The computer will have it very difficult to link different datasets together because of the missing attribute. It's because of this we want to make the DCAT validator so that users can see if there feed is valid or not and what elements, classes, attributes or properties have to be adjusted in order for the different datasets to be linked together by computers.</p>
@@ -75,7 +80,7 @@
               <li><a href="http://www.flanders.be/en">Flemish Government</a></li>
               <li><a href="https://github.com/StanCallewaert">Github Stan Callewaert</a></li>
               <li><a href="https://github.com/sebastienhenau">Github Sébastien Henau</a></li>
-              <li><a href="http://open.summerofcode.be/2015/07/10/dcat/">DCAT blog</a></li>
+              <li><a href="http://open.summerofcode.be/2015/07/10/dcat/">DCAT blogpost</a></li>
             </ul>
           </div>
         </div>
@@ -85,7 +90,7 @@
     <!-- FOOTER -->
     <div class="container footerCont">
       <footer>
-        <p>'DCAT - validator' &copy; 2015, Open Knowledge Belgium. DCAT - validator is a part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> This project is funded by the <a href="http://www.flanders.be/en">Flemish government</a>.</p>
+        <p>'DCAT validator' &copy; 2015, Open Knowledge Belgium. DCAT validator is a part of <a href="http://www.openknowledge.be/">Open Knowledge Belgium.</a> This project is funded by the <a href="http://www.flanders.be/en">Flemish government</a>.</p>
       </footer>
     </div>
 
@@ -111,16 +116,5 @@
     <script src="../js/dcat-validator.bundle.js"></script>
     <!-- Self written javascript -->
     <script src="../js/script.js"></script>
-
-    <!-- Google analytics -->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-65756494-1', 'auto');
-      ga('send', 'pageview');
-    </script>
   </body>
 </html>
