@@ -140,7 +140,7 @@
 	    	callback();
         // if the function can't get the source code from the URI, it will return an error that the URI is not valid
 	    }).fail(function(){
-            showAlert("The URI you have entered is not valid.", ".tab1Input", ".formatSelectTab1", "#tab1");
+            showAlert("The server at the URI you have entered is blocking access to the content.", ".tab1Input", ".formatSelectTab1", "#tab1");
 	    });
     }
 
