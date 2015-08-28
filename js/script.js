@@ -166,7 +166,7 @@
         // if the parser is automatic then it executes a parser depending on the returned content-type from the ajax request
         }else if($(".formatSelectTab1").val() == "auto"){
             var xhr = $.ajax({
-                type:"HEAD",
+                type:"GET",
                 dataType:text,
                 url:$(".tab1Input").val(),
                 headers: {          
