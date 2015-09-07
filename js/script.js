@@ -803,7 +803,7 @@
                     'required': 'recommended',
                     'Range': 'Anything',
                     'URI': 'http://purl.org/dc/terms/language',
-                    'multiple': false
+                    'multiple': true
                 },
                 {
                     'name': 'publisher',
